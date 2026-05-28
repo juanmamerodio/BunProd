@@ -6,7 +6,7 @@ import {
   Check,
   Flame,
   ShieldCheck,
-  Send,
+    Send,
   Crown,
   Zap,
   Eye,
@@ -150,7 +150,7 @@ export const QualificationFunnel: React.FC = () => {
               initial={{ opacity: 0, y: 40, scale: 0.97 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.2 }}
               className="lg:col-span-6"
             >
               <div className="relative p-8 md:p-10 rounded-[2rem] bg-brand-surface/60 backdrop-blur-xl border border-brand-gold/15 glow-gold overflow-hidden">

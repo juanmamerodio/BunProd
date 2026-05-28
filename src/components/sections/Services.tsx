@@ -101,7 +101,7 @@ export const Services: React.FC = () => {
                 className={`${colSpan}`}
               >
                 <Card
-                  className={`h-full border border-brand-border/40 bg-brand-surface/30 backdrop-blur-sm flex flex-col justify-between hover:border-brand-gold/25 transition-colors duration-500 ${
+                  className={`h-full border border-brand-gold/10 bg-brand-surface/20 glass-panel shadow-volumetric flex flex-col justify-between hover:border-brand-gold/30 hover:bg-brand-surface/30 transition-all duration-700 group ${
                     isHero ? 'md:flex-row md:gap-12' : ''
                   }`}
                 >
@@ -111,8 +111,8 @@ export const Services: React.FC = () => {
                     }`}
                   >
                     {/* Icon + Tag header */}
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-brand-gold/[0.08] flex items-center justify-center border border-brand-gold/20">
+                    <div className="flex items-center justify-between gap-3 relative z-20">
+                      <div className="w-12 h-12 rounded-2xl bg-brand-gold/[0.08] flex items-center justify-center border border-brand-gold/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
                         {iconMap[idx] || iconMap[0]}
                       </div>
                       {service.tag && (

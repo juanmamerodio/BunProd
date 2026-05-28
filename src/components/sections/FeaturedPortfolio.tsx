@@ -6,7 +6,7 @@ import {
   Play,
   TrendingUp,
   ArrowUpRight,
-} from 'lucide-react';
+  } from 'lucide-react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -98,11 +98,11 @@ export const FeaturedPortfolio: React.FC = () => {
 
                     {/* Before / After Badges */}
                     <div className="absolute top-5 left-5 z-20 flex gap-2">
-                      <span className="text-[10px] font-bold bg-red-950/80 text-red-400 border border-red-800/50 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">
-                        Antes: Común
+                      <span className="text-[9px] font-bold bg-neutral-950/80 text-brand-muted border border-neutral-800 px-3 py-1.5 rounded-sm uppercase tracking-[0.2em] shadow-lg backdrop-blur-md">
+                        Antes: <span className="text-red-400">Común</span>
                       </span>
-                      <span className="text-[10px] font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/50 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">
-                        Después: Moño
+                      <span className="text-[9px] font-bold bg-neutral-950/80 text-brand-cream border border-brand-gold/30 px-3 py-1.5 rounded-sm uppercase tracking-[0.2em] shadow-lg backdrop-blur-md">
+                        Después: <span className="text-[#C9A84C]">Moño</span>
                       </span>
                     </div>
 
@@ -112,9 +112,9 @@ export const FeaturedPortfolio: React.FC = () => {
                       <motion.button
                         aria-label={`Reproducir caso de éxito de ${item.cliente}`}
                         whileHover={{ scale: 1.1 }}
-                        className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition-all duration-500"
+                        className="w-16 h-16 md:w-20 md:h-20 rounded-full glass-panel shadow-volumetric border-brand-gold/30 flex items-center justify-center group-hover:bg-white group-hover:border-white transition-all duration-700"
                       >
-                        <Play className="w-6 h-6 md:w-7 md:h-7 text-white ml-1 fill-white" aria-hidden="true" />
+                        <Play className="w-6 h-6 md:w-7 md:h-7 text-brand-gold group-hover:text-black ml-1 fill-current transition-colors duration-700" aria-hidden="true" />
                       </motion.button>
 
                       {/* Client label on hover */}
@@ -168,19 +168,19 @@ export const FeaturedPortfolio: React.FC = () => {
 
                   {/* Metric Highlight */}
                   <div className="pt-5 border-t border-brand-border/40">
-                    <div className="flex items-center gap-4 p-5 rounded-2xl bg-brand-surface/60 border border-brand-border/40 backdrop-blur-sm">
-                      <div className="w-11 h-11 rounded-xl bg-brand-gold/10 flex items-center justify-center border border-brand-gold/20 flex-shrink-0">
+                    <div className="flex items-center gap-4 p-5 rounded-2xl bg-brand-surface/60 border border-brand-border/40 glass-panel shadow-volumetric hover:border-brand-gold/20 transition-all duration-500 cursor-pointer group">
+                      <div className="w-11 h-11 rounded-xl bg-brand-gold/10 flex items-center justify-center border border-brand-gold/20 flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
                         <TrendingUp className="w-5 h-5 text-brand-gold-light" />
                       </div>
                       <div className="flex-1">
                         <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.2em] block">
                           Métrica Destacada
                         </span>
-                        <p className="text-sm font-bold text-brand-cream mt-0.5 leading-snug">
+                        <p className="text-sm font-bold text-brand-cream mt-0.5 leading-snug group-hover:text-brand-gold-light transition-colors duration-300">
                           {item.metricaDestacada}
                         </p>
                       </div>
-                      <ArrowUpRight className="w-4 h-4 text-brand-gold/40 flex-shrink-0" />
+                      <ArrowUpRight className="w-4 h-4 text-brand-gold/40 flex-shrink-0 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
                     </div>
                   </div>
                 </div>

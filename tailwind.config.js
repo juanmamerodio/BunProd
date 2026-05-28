@@ -22,8 +22,9 @@ export default {
         },
       },
       fontFamily: {
-        sans:    ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Playfair Display', 'Georgia', 'serif'],
+        sans:    ['Poppins', 'system-ui', 'sans-serif'],
+        display: ['Poppins', 'sans-serif'],
+        script:  ['"Cormorant Garamond"', 'serif'],
       },
       animation: {
         'marquee':        'marquee 30s linear infinite',

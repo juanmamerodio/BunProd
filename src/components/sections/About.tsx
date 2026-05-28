@@ -1,10 +1,24 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { teamMembers } from '../../data/team';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Sparkles, Check } from 'lucide-react';
 
 export const About: React.FC = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } }
+  };
+
   return (
     <section id="about" className="bg-neutral-950 py-24 md:py-32 relative overflow-hidden">
       
@@ -28,20 +42,26 @@ export const About: React.FC = () => {
         </div>
 
         {/* Dynamic asymmetric team grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto items-stretch">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 max-w-5xl mx-auto items-stretch"
+        >
           {teamMembers.map((member, idx) => (
-            <Card
-              key={member.id}
-              className="flex flex-col justify-between hover:border-neutral-700 hover:shadow-2xl transition-all duration-500 bg-neutral-900/35 flex-grow"
-            >
+            <motion.div variants={itemVariants} key={member.id} className="flex-grow flex">
+              <Card
+                className={`flex flex-col justify-between hover:border-brand-gold/30 hover:shadow-volumetric transition-all duration-700 bg-neutral-900/40 glass-panel flex-grow ${idx === 1 ? 'md:mt-16' : ''}`}
+              >
               <div className="space-y-8 flex-grow">
                 
                 {/* Visual placeholder box simulating an editorial photography */}
-                <div className="w-full aspect-[4/3] rounded-xl bg-neutral-900 border border-neutral-800 flex items-center justify-center relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent z-10" />
+                <div className="w-full aspect-[3/4] md:aspect-[4/5] rounded-2xl bg-neutral-950 border border-neutral-800/80 flex items-center justify-center relative overflow-hidden group shadow-inner">
+                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/90 via-neutral-950/10 to-transparent z-10" />
                   
                   {/* Background overlay flash of gold */}
-                  <div className="absolute inset-0 bg-[#C9A84C]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  <div className="absolute inset-0 bg-[#C9A84C]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none mix-blend-overlay" />
 
                   {/* Aesthetic Role Title Overlay */}
                   <div className="absolute bottom-4 left-4 z-20">
@@ -89,8 +109,9 @@ export const About: React.FC = () => {
               </div>
 
             </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
       </div>
     </section>

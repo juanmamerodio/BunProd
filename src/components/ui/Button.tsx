@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import type { LucideIcon } from 'lucide-react';
 import type { HTMLMotionProps } from 'framer-motion';
+import type { LucideIcon } from 'lucide-react';
 
 interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref"> {
   variant?: 'primary' | 'secondary' | 'ghost';

@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import { Badge } from '../ui/Badge';
 import {
   Video,
-  Clock,
+    Clock,
   Award,
-} from 'lucide-react';
+  } from 'lucide-react';
 
 const consultingDetails = [
   {

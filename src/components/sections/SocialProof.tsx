@@ -38,7 +38,7 @@ export const SocialProof: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: idx * 0.1 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const, delay: idx * 0.1 }}
               className="bg-neutral-900/40 border border-neutral-900 p-6 md:p-8 rounded-2xl relative overflow-hidden flex flex-col items-start justify-between min-h-[170px] hover:border-neutral-800 transition-colors duration-300"
             >
               {/* Stat Icon */}

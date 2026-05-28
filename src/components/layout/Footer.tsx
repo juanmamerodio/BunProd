@@ -14,8 +14,6 @@ const directoryLinks = [
 ];
 
 const socialLinks = [
-  { icon: Globe, href: '#', label: 'Instagram' },
-  { icon: Globe, href: '#', label: 'LinkedIn' },
   { icon: Globe, href: '#', label: 'Website' },
 ];
 

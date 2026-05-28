@@ -33,8 +33,6 @@ export const Footer: React.FC = () => {
             <div className="flex gap-4 pt-2">
               {[
                 { icon: <Globe className="w-4 h-4" />, href: '#' },
-                { icon: <Globe className="w-4 h-4" />, href: '#' },
-                { icon: <Globe className="w-4 h-4" />, href: '#' },
               ].map((social, idx) => (
                 <a
                   key={idx}

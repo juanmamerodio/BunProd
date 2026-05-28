@@ -55,23 +55,23 @@ export const PortfolioMarquee: React.FC = () => {
           {continuousRow1.map((work, idx) => (
             <div
               key={`r1-${idx}`}
-              className="flex-shrink-0 w-72 md:w-[400px] aspect-[16/10] rounded-3xl bg-brand-surface border border-neutral-900 relative overflow-hidden group flex flex-col justify-end p-6 hover:border-brand-gold/30 hover:shadow-[0_0_30px_rgba(201,168,76,0.1)] transition-all duration-700 ease-out"
+              className="flex-shrink-0 w-72 md:w-[400px] aspect-[16/10] rounded-[2rem] bg-brand-surface border border-neutral-800/60 relative overflow-hidden group flex flex-col justify-end p-6 hover:border-brand-gold/40 hover:shadow-volumetric transition-all duration-700 ease-out transform-gpu hover:-translate-y-2 hover:rotate-1"
             >
               {/* Image background with dark cinematic overlay */}
               <img 
                 src={work.image} 
                 alt={work.title}
-                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-75 transition-all duration-[1200ms] ease-out z-0"
+                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-[1.08] group-hover:opacity-80 transition-all duration-[1500ms] ease-out z-0"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent z-10" />
               
               {/* Play button mockup */}
-              <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-neutral-950/80 backdrop-blur-md border border-neutral-800/80 flex items-center justify-center group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all duration-500 z-20 shadow-lg">
+              <div className="absolute top-4 right-4 w-10 h-10 rounded-full glass-panel flex items-center justify-center group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all duration-500 z-20 shadow-lg">
                 <Play className="w-3 h-3 fill-current ml-0.5" />
               </div>
 
               {/* Hover flash of gold light */}
-              <div className="absolute inset-0 bg-brand-gold/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-brand-gold/[0.05] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10 mix-blend-overlay" />
 
               {/* Details */}
               <div className="relative z-20 space-y-1">
@@ -91,23 +91,23 @@ export const PortfolioMarquee: React.FC = () => {
           {continuousRow2.map((work, idx) => (
             <div
               key={`r2-${idx}`}
-              className="flex-shrink-0 w-72 md:w-[400px] aspect-[16/10] rounded-3xl bg-brand-surface border border-neutral-900 relative overflow-hidden group flex flex-col justify-end p-6 hover:border-brand-gold/30 hover:shadow-[0_0_30px_rgba(201,168,76,0.1)] transition-all duration-700 ease-out"
+              className="flex-shrink-0 w-72 md:w-[400px] aspect-[16/10] rounded-[2rem] bg-brand-surface border border-neutral-800/60 relative overflow-hidden group flex flex-col justify-end p-6 hover:border-brand-gold/40 hover:shadow-volumetric transition-all duration-700 ease-out transform-gpu hover:-translate-y-2 hover:-rotate-1"
             >
               {/* Image background with dark cinematic overlay */}
               <img 
                 src={work.image} 
                 alt={work.title}
-                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 group-hover:opacity-75 transition-all duration-[1200ms] ease-out z-0"
+                className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-[1.08] group-hover:opacity-80 transition-all duration-[1500ms] ease-out z-0"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent z-10" />
               
               {/* Play button mockup */}
-              <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-neutral-950/80 backdrop-blur-md border border-neutral-800/80 flex items-center justify-center group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all duration-500 z-20 shadow-lg">
+              <div className="absolute top-4 right-4 w-10 h-10 rounded-full glass-panel flex items-center justify-center group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all duration-500 z-20 shadow-lg">
                 <Play className="w-3 h-3 fill-current ml-0.5" />
               </div>
 
               {/* Hover flash of gold light */}
-              <div className="absolute inset-0 bg-brand-gold/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-brand-gold/[0.05] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10 mix-blend-overlay" />
 
               {/* Details */}
               <div className="relative z-20 space-y-1">
