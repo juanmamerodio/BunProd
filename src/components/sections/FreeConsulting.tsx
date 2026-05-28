@@ -1,13 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '../ui/Badge';
-import { Button } from '../ui/Button';
 import {
   Video,
-  Calendar,
   Clock,
   Award,
-  ArrowRight,
 } from 'lucide-react';
 
 const consultingDetails = [

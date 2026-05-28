@@ -1,4 +1,4 @@
-import { PortfolioCase } from '../types';
+import type { PortfolioCase } from '../types';
 
 export const portfolioCases: PortfolioCase[] = [
   {

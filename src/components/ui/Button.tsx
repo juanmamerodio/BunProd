@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import type { HTMLMotionProps } from 'framer-motion';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<HTMLMotionProps<"button">, "ref"> {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
@@ -54,7 +55,7 @@ export const Button: React.FC<ButtonProps> = ({
         </span>
       ) : (
         <span className="flex items-center justify-center gap-2">
-          {children}
+          {children as React.ReactNode}
           {Icon && <Icon className="w-4 h-4" />}
         </span>
       )}

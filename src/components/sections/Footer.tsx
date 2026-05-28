@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUp, Mail, Instagram, Linkedin, Globe, Sparkles } from 'lucide-react';
+import { ArrowUp, Mail, Globe, Sparkles } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -32,8 +32,8 @@ export const Footer: React.FC = () => {
             {/* Social handles */}
             <div className="flex gap-4 pt-2">
               {[
-                { icon: <Instagram className="w-4 h-4" />, href: '#' },
-                { icon: <Linkedin className="w-4 h-4" />, href: '#' },
+                { icon: <Globe className="w-4 h-4" />, href: '#' },
+                { icon: <Globe className="w-4 h-4" />, href: '#' },
                 { icon: <Globe className="w-4 h-4" />, href: '#' },
               ].map((social, idx) => (
                 <a

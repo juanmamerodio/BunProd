@@ -1,6 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowUp, Mail, Instagram, Linkedin, Globe, Sparkles } from 'lucide-react';
+import { ArrowUp, Mail, Globe, Sparkles } from 'lucide-react';
 
 const smoothScrollTo = (id: string) => {
   const el = document.getElementById(id);
@@ -15,8 +14,8 @@ const directoryLinks = [
 ];
 
 const socialLinks = [
-  { icon: Instagram, href: '#', label: 'Instagram' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn' },
+  { icon: Globe, href: '#', label: 'Instagram' },
+  { icon: Globe, href: '#', label: 'LinkedIn' },
   { icon: Globe, href: '#', label: 'Website' },
 ];
 

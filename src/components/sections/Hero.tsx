@@ -24,7 +24,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.8,
-      ease: [0.16, 1, 0.3, 1], // Elegante bezier de desaceleración
+      ease: [0.16, 1, 0.3, 1] as const, // Elegante bezier de desaceleración
     },
   },
 };
