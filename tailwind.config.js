@@ -8,23 +8,32 @@ export default {
     extend: {
       colors: {
         brand: {
-          black:   '#0A0A0A',
-          dark:    '#111111',
-          surface: '#1A1A1A',
-          card:    '#1E1E1E',
-          border:  '#2A2A2A',
-          gold:    '#C9A84C',
-          'gold-light': '#E8C46A',
-          'gold-dark':  '#A8873A',
-          cream:   '#F5F0E8',
-          muted:   '#888888',
-          text:    '#E8E8E8',
+          black:   '#050302',
+          dark:    '#0A0807',
+          surface: '#120F0D',
+          card:    '#1A1512',
+          border:  '#2C221A',
+          gold:    '#E8D1A7', // Oro Claro
+          'gold-light': '#F3E5CB',
+          'gold-dark':  '#9D9167', // Oro Viejo/Oliva
+          bronze:  '#84592B', // Bronce
+          coffee:  '#442D1C', // Café Oscuro
+          cream:   '#FBF9F6',
+          muted:   '#A0958E',
+          text:    '#F5EFE6',
         },
+        afterbun: {
+          gold:    '#E8D1A7',
+          oliva:   '#9D9167',
+          bronze:  '#84592B',
+          coffee:  '#442D1C',
+          deep:    '#050302',
+        }
       },
       fontFamily: {
         sans:    ['Poppins', 'system-ui', 'sans-serif'],
-        display: ['Poppins', 'sans-serif'],
-        script:  ['"Cormorant Garamond"', 'serif'],
+        display: ['Playfair Display', 'serif'],
+        body:    ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
         'marquee':        'marquee 30s linear infinite',
