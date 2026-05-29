@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import { teamMembers } from '../../data/team';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Sparkles, Check } from 'lucide-react';
 
 export const About: React.FC = () => {
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -14,7 +15,7 @@ export const About: React.FC = () => {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 40, filter: 'blur(6px)' },
     visible: { 
       opacity: 1, 
@@ -24,7 +25,7 @@ export const About: React.FC = () => {
     }
   };
 
-  const checkVariants = {
+  const checkVariants: Variants = {
     hidden: { opacity: 0, scale: 0.6 },
     visible: (i: number) => ({
       opacity: 1,
