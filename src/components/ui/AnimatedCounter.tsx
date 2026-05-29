@@ -13,6 +13,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
   const [displayVal, setDisplayVal] = useState(0);
+  const [hasReached, setHasReached] = useState(false);
   
   const motionVal = useMotionValue(0);
   const springVal = useSpring(motionVal, {
@@ -29,15 +30,21 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
 
   useEffect(() => {
     const unsubscribe = springVal.on('change', (latest) => {
-      setDisplayVal(Math.round(latest));
+      const rounded = Math.round(latest);
+      setDisplayVal(rounded);
+      if (rounded >= value && !hasReached) {
+        setHasReached(true);
+      }
     });
     return () => unsubscribe();
-  }, [springVal]);
+  }, [springVal, value, hasReached]);
 
   return (
-    <div ref={ref} className="font-display font-extrabold text-5xl md:text-6xl text-white tracking-tight">
-      <span>{displayVal}</span>
-      <span className="text-[#C9A84C] ml-0.5">{suffix}</span>
+    <div ref={ref} className="font-display font-extrabold text-5xl md:text-6xl text-brand-cream tracking-tight">
+      <span className={`transition-all duration-700 ${hasReached ? 'drop-shadow-[0_0_20px_rgba(232,209,167,0.3)]' : ''}`}>
+        {displayVal}
+      </span>
+      <span className="text-brand-gold ml-0.5">{suffix}</span>
     </div>
   );
 };

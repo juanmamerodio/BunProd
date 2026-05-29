@@ -15,10 +15,10 @@ import {
 } from 'lucide-react';
 
 const iconMap: Record<number, React.ReactNode> = {
-  0: <Video className="w-5 h-5 text-brand-gold-light" />,
-  1: <Sparkles className="w-5 h-5 text-brand-gold-light" />,
-  2: <Layers className="w-5 h-5 text-brand-gold-light" />,
-  3: <TrendingUp className="w-5 h-5 text-brand-gold-light" />,
+  0: <Video className="w-5 h-5 text-brand-gold" />,
+  1: <Sparkles className="w-5 h-5 text-brand-gold" />,
+  2: <Layers className="w-5 h-5 text-brand-gold" />,
+  3: <TrendingUp className="w-5 h-5 text-brand-gold" />,
 };
 
 const containerVariants = {
@@ -33,12 +33,13 @@ const containerVariants = {
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 40, filter: 'blur(6px)' },
   visible: {
     opacity: 1,
     y: 0,
+    filter: 'blur(0px)',
     transition: {
-      duration: 0.7,
+      duration: 0.8,
       ease: [0.16, 1, 0.3, 1] as const,
     },
   },
@@ -53,16 +54,16 @@ export const Services: React.FC = () => {
       className="relative bg-brand-black py-28 md:py-36 overflow-hidden noise-overlay"
     >
       {/* Ambient glow - Hidden on mobile for performance */}
-      <div className="absolute top-[-15%] left-[-10%] w-[55%] h-[55%] rounded-full bg-brand-gold/[0.03] blur-[150px] pointer-events-none hidden md:block" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-white/[0.015] blur-[120px] pointer-events-none hidden md:block" />
+      <div className="absolute top-[-15%] left-[-10%] w-[55%] h-[55%] rounded-full bg-brand-gold/[0.025] blur-[150px] pointer-events-none hidden md:block" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-white/[0.01] blur-[120px] pointer-events-none hidden md:block" />
 
       <div className="section-container relative z-10">
         {/* ── Section Header ── */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-3xl mb-20"
         >
           <Badge variant="gold" className="mb-5">
@@ -101,7 +102,7 @@ export const Services: React.FC = () => {
                 className={`${colSpan}`}
               >
                 <Card
-                  className={`h-full border border-brand-gold/10 bg-brand-surface/20 glass-panel shadow-volumetric flex flex-col justify-between hover:border-brand-gold/30 hover:bg-brand-surface/30 transition-all duration-700 group ${
+                  className={`h-full border border-brand-gold/[0.08] bg-brand-surface/20 glass-panel shadow-volumetric flex flex-col justify-between hover:border-brand-gold/20 hover:bg-brand-surface/30 transition-all duration-700 group ${
                     isHero ? 'md:flex-row md:gap-12' : ''
                   }`}
                 >
@@ -112,9 +113,13 @@ export const Services: React.FC = () => {
                   >
                     {/* Icon + Tag header */}
                     <div className="flex items-center justify-between gap-3 relative z-20">
-                      <div className="w-12 h-12 rounded-2xl bg-brand-gold/[0.08] flex items-center justify-center border border-brand-gold/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                      <motion.div
+                        whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                        className="w-12 h-12 rounded-2xl bg-brand-gold/[0.06] flex items-center justify-center border border-brand-gold/15 shadow-inner group-hover:bg-brand-gold/[0.1] transition-colors duration-500"
+                      >
                         {iconMap[idx] || iconMap[0]}
-                      </div>
+                      </motion.div>
                       {service.tag && (
                         <Badge variant="gold">{service.tag}</Badge>
                       )}
@@ -141,7 +146,7 @@ export const Services: React.FC = () => {
                     </div>
 
                     {/* Benefits */}
-                    <div className="pt-4 border-t border-brand-border/30 space-y-4">
+                    <div className="pt-4 border-t border-brand-border/20 space-y-4">
                       <span className="text-[10px] font-bold text-brand-gold uppercase tracking-[0.2em] block">
                         Beneficios Clave
                       </span>
@@ -149,9 +154,9 @@ export const Services: React.FC = () => {
                         {service.beneficios.map((beneficio, bIdx) => (
                           <li
                             key={bIdx}
-                            className="flex items-start gap-2.5 text-xs text-brand-cream/90"
+                            className="flex items-start gap-2.5 text-xs text-brand-cream/85"
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5 text-brand-gold-light flex-shrink-0 mt-0.5" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-brand-gold flex-shrink-0 mt-0.5" />
                             <span className="leading-relaxed">{beneficio}</span>
                           </li>
                         ))}
@@ -163,22 +168,24 @@ export const Services: React.FC = () => {
                   <div
                     className={`space-y-4 ${
                       isHero
-                        ? 'md:max-w-[40%] md:border-l md:border-brand-border/30 md:pl-12 flex flex-col justify-center'
+                        ? 'md:max-w-[40%] md:border-l md:border-brand-border/20 md:pl-12 flex flex-col justify-center'
                         : 'pt-6 mt-auto'
                     }`}
                   >
-                    <div className="p-4 rounded-xl bg-brand-black/50 border border-brand-border/40">
-                      <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em] block mb-2">
+                    <div className="p-4 rounded-xl bg-brand-black/50 border border-brand-border/30 relative overflow-hidden">
+                      {/* Gold accent left border */}
+                      <div className="absolute left-0 top-2 bottom-2 w-[2px] bg-gradient-to-b from-brand-gold/40 via-brand-gold/20 to-transparent rounded-full" />
+                      <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.2em] block mb-2 pl-3">
                         Resultado Esperado
                       </span>
-                      <p className="text-xs text-brand-cream/80 leading-relaxed">
+                      <p className="text-xs text-brand-cream/75 leading-relaxed pl-3">
                         {service.resultadoEsperado}
                       </p>
                     </div>
 
                     <button
                       onClick={() => scrollTo('qualification')}
-                      className="flex items-center gap-1.5 text-xs font-bold text-brand-gold-light hover:text-brand-gold transition-colors group cursor-pointer pt-1"
+                      className="flex items-center gap-1.5 text-xs font-bold text-brand-gold/80 hover:text-brand-gold transition-colors group cursor-pointer pt-1"
                     >
                       Consultar Disponibilidad
                       <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />

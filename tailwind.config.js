@@ -31,16 +31,23 @@ export default {
         }
       },
       fontFamily: {
-        sans:    ['Poppins', 'system-ui', 'sans-serif'],
-        display: ['Playfair Display', 'serif'],
-        body:    ['Inter', 'system-ui', 'sans-serif'],
+        sans:     ['Poppins', 'system-ui', 'sans-serif'],
+        headline: ['Poppins', 'system-ui', 'sans-serif'],
+        display:  ['Playfair Display', 'serif'],
+        body:     ['Inter', 'system-ui', 'sans-serif'],
+      },
+      transitionTimingFunction: {
+        'cinematic': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'lens':      'cubic-bezier(0.22, 0.68, 0, 1)',
       },
       animation: {
-        'marquee':        'marquee 30s linear infinite',
-        'marquee-reverse':'marquee-reverse 30s linear infinite',
-        'float':          'float 6s ease-in-out infinite',
-        'pulse-slow':     'pulse 4s ease-in-out infinite',
-        'spin-slow':      'spin 20s linear infinite',
+        'marquee':         'marquee 30s linear infinite',
+        'marquee-reverse': 'marquee-reverse 30s linear infinite',
+        'float':           'float 6s ease-in-out infinite',
+        'pulse-slow':      'pulse 4s ease-in-out infinite',
+        'spin-slow':       'spin 20s linear infinite',
+        'glow-pulse':      'glow-pulse 3s ease-in-out infinite',
+        'shimmer-border':  'shimmer-border 4s linear infinite',
       },
       keyframes: {
         marquee: {
@@ -55,6 +62,14 @@ export default {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%':      { transform: 'translateY(-20px)' },
         },
+        'glow-pulse': {
+          '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+          '50%':      { opacity: '0.8', transform: 'scale(1.05)' },
+        },
+        'shimmer-border': {
+          '0%':   { backgroundPosition: '200% center' },
+          '100%': { backgroundPosition: '-200% center' },
+        },
       },
       backgroundImage: {
         'gradient-radial':  'radial-gradient(var(--tw-gradient-stops))',
@@ -62,10 +77,16 @@ export default {
         'noise':            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E\")",
       },
       boxShadow: {
-        'gold':    '0 0 40px rgba(201, 168, 76, 0.15)',
-        'gold-lg': '0 0 80px rgba(201, 168, 76, 0.2)',
-        'dark':    '0 25px 60px rgba(0, 0, 0, 0.6)',
-        'card':    '0 8px 32px rgba(0, 0, 0, 0.4)',
+        'gold':        '0 0 40px rgba(232, 209, 167, 0.12), 0 0 80px rgba(132, 89, 43, 0.08)',
+        'gold-lg':     '0 0 80px rgba(232, 209, 167, 0.15), 0 0 140px rgba(132, 89, 43, 0.1)',
+        'gold-glow':   '0 0 20px rgba(232, 209, 167, 0.2)',
+        'dark':        '0 25px 60px rgba(0, 0, 0, 0.6)',
+        'card':        '0 8px 32px rgba(0, 0, 0, 0.4)',
+        'card-hover':  '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(232, 209, 167, 0.04)',
+      },
+      backdropBlur: {
+        '3xl': '64px',
+        '4xl': '96px',
       },
     },
   },

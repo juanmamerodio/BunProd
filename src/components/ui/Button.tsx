@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
 import type { HTMLMotionProps } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 
@@ -27,34 +27,36 @@ export const Button: React.FC<ButtonProps> = ({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Motion Values for Dynamic Spotlight Glow
+  // Motion Values for Dynamic Spotlight Glow — now reactive via useMotionTemplate
   const glowX = useMotionValue(0);
   const glowY = useMotionValue(0);
 
-  const springConfig = { damping: 12, stiffness: 120, mass: 0.5 };
+  // Refined spring physics: lighter mass, higher stiffness for snappy luxury feel
+  const springConfig = { damping: 15, stiffness: 150, mass: 0.4 };
   const magneticX = useSpring(mouseX, springConfig);
   const magneticY = useSpring(mouseY, springConfig);
+
+  // Reactive glow background using useMotionTemplate (fixes static .get() bug)
+  const glowBackground = useMotionTemplate`radial-gradient(50px circle at ${glowX}px ${glowY}px, rgba(232, 209, 167, 0.15), transparent 100%)`;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current) return;
     
     const rect = buttonRef.current.getBoundingClientRect();
     
-    // Magnetic translation calculation (relative to button center, max 12px range)
+    // Magnetic translation calculation (relative to button center)
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const distanceX = e.clientX - centerX;
     const distanceY = e.clientY - centerY;
     
-    // Smooth magnetic attraction factor (0.2)
+    // Smooth magnetic attraction factor
     mouseX.set(distanceX * 0.22);
     mouseY.set(distanceY * 0.22);
 
     // Glow position calculation (relative to button left-top)
-    const localX = e.clientX - rect.left;
-    const localY = e.clientY - rect.top;
-    glowX.set(localX);
-    glowY.set(localY);
+    glowX.set(e.clientX - rect.left);
+    glowY.set(e.clientY - rect.top);
   };
 
   const handleMouseLeave = () => {
@@ -71,17 +73,12 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const variantStyles = {
-    primary: 'bg-[#E8D1A7] text-[#442D1C] hover:bg-[#F3E5CB] border border-[#E8D1A7] shadow-[0_4px_20px_rgba(232,209,167,0.15)]',
-    secondary: 'bg-transparent text-[#F5EFE6] border border-[#9D9167]/30 hover:border-[#E8D1A7] hover:shadow-[0_0_25px_rgba(232,209,167,0.08)]',
-    ghost: 'bg-transparent text-[#9D9167] hover:text-[#E8D1A7] border border-transparent',
+    primary: 'bg-brand-gold text-brand-coffee hover:bg-brand-gold-light border border-brand-gold shadow-[0_4px_20px_rgba(232,209,167,0.15)] shimmer-sweep',
+    secondary: 'bg-transparent text-brand-text border border-brand-gold-dark/30 hover:border-brand-gold hover:shadow-gold-glow',
+    ghost: 'bg-transparent text-brand-gold-dark hover:text-brand-gold border border-transparent',
   };
 
   const widthStyles = fullWidth ? 'w-full' : '';
-
-  // Dynamic glow style for hover reveal
-  const glowStyle = {
-    background: 'radial-gradient(45px circle at var(--x) var(--y), rgba(232, 209, 167, 0.15), transparent 100%)',
-  };
 
   return (
     <motion.button
@@ -90,7 +87,7 @@ export const Button: React.FC<ButtonProps> = ({
         x: magneticX,
         y: magneticY,
       }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -98,16 +95,10 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={isLoading || props.disabled}
       {...props}
     >
-      {/* Visual Spatial Glow Layer */}
-      <span 
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{
-          // @ts-ignore
-          '--x': `${glowX.get()}px`,
-          // @ts-ignore
-          '--y': `${glowY.get()}px`,
-          ...glowStyle
-        }}
+      {/* Reactive Spatial Glow Layer — follows cursor in real-time */}
+      <motion.span 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl"
+        style={{ background: glowBackground }}
       />
 
       {isLoading ? (
