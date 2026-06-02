@@ -1,8 +1,8 @@
-# MOÑO PRODUCCIONES — MASTER CONTEXT FILE
+# Afterbow Productions — MASTER CONTEXT FILE
 
 Actuá como un Director Creativo Senior, Product Designer, Arquitecto Frontend y especialista en funnels de ventas premium.
 
-Tu trabajo es utilizar TODO este documento como una fuente de verdad permanente para cualquier tarea futura relacionada con la landing page de Moño Producciones.
+Tu trabajo es utilizar TODO este documento como una fuente de verdad permanente para cualquier tarea futura relacionada con la landing page de Afterbow Productions.
 
 IMPORTANTE:
 
@@ -20,7 +20,7 @@ IMPORTANTE:
 ━━━━━━━━━━━━━━━━━━
 
 Nombre:
-Moño Producciones
+Afterbow Productions
 
 Actividad:
 Productora audiovisual y de contenido digital para pequeñas y medianas empresas.
@@ -32,10 +32,10 @@ Propuesta principal:
 “Construimos el contenido del mes para tu negocio.”
 
 Oferta principal:
-Plan mensual de contenido “Moño Premium”.
+Plan mensual de contenido “Afterbow Premium”.
 
 Diferencial:
-Moño Producciones se traslada directamente al lugar de grabación, por lo tanto el cliente no debe preocuparse por movilidad, logística ni producción técnica.
+Afterbow Productions se traslada directamente al lugar de grabación, por lo tanto el cliente no debe preocuparse por movilidad, logística ni producción técnica.
 
 La marca vende:
 
@@ -95,6 +95,13 @@ ESTILO GENERAL:
 - Editorial
 - Visualmente caro
 - Oscuro y sofisticado
+- 3D premuin del mayor nivel posible
+- animaciones epicas de after effects: Motion frames, motion graphics, etc
+- PALETA OFICIAL: (a cambiar con la palette de antigravity)
+- #7030EF
+- #DB1FFF
+- #090820
+- #FFFFFF
 
 REFERENCIAS ESTÉTICAS:
 

@@ -33,7 +33,7 @@ export default {
       fontFamily: {
         sans:     ['Poppins', 'system-ui', 'sans-serif'],
         headline: ['Poppins', 'system-ui', 'sans-serif'],
-        display:  ['Playfair Display', 'serif'],
+        display:  ['Poppins', 'system-ui', 'sans-serif'], // Forced to Poppins for premium tech aesthetic
         body:     ['Inter', 'system-ui', 'sans-serif'],
       },
       transitionTimingFunction: {
@@ -87,13 +87,14 @@ export default {
         'depth-gradient':   'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(17,15,48,0.5) 0%, rgba(9,8,32,1) 70%)',
       },
       boxShadow: {
-        'violet':      '0 0 40px rgba(112, 48, 239, 0.18), 0 0 80px rgba(219, 31, 255, 0.08)',
-        'violet-lg':   '0 0 80px rgba(112, 48, 239, 0.22), 0 0 140px rgba(219, 31, 255, 0.12)',
+        'violet':      '0 0 40px rgba(112, 48, 239, 0.15), 0 0 80px rgba(219, 31, 255, 0.05)',
+        'violet-lg':   '0 0 80px rgba(112, 48, 239, 0.20), 0 0 140px rgba(219, 31, 255, 0.10)',
         'violet-glow': '0 0 20px rgba(112, 48, 239, 0.3)',
         'fuchsia-glow':'0 0 24px rgba(219, 31, 255, 0.25)',
         'dark':        '0 25px 60px rgba(0, 0, 0, 0.7)',
         'card':        '0 8px 32px rgba(0, 0, 0, 0.5)',
         'card-hover':  '0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(112, 48, 239, 0.08)',
+        'volumetric':  '0 30px 60px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.02)',
       },
       backdropBlur: {
         '3xl': '64px',
