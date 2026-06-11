@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     }
 
     // ── 4. Modelo correcto (gemini-2.5-flash estable)
-    const MODEL_NAME = 'gemini-3.5-flash';
+    const MODEL_NAME = 'gemini-3.1-flash-lite';
     const endpoint   = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
 
     // ── 5. Prompt maestro Delta Engine
