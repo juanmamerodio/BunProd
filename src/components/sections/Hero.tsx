@@ -88,9 +88,9 @@ export const Hero: React.FC = () => {
   const { scrollY } = useScroll();
   
   // Multi-speed parallax layers
-  const yBgSlow = useTransform(scrollY, [0, 1000], [0, 200]);
-  const yBgMed = useTransform(scrollY, [0, 1000], [0, 100]);
-  const yVideo = useTransform(scrollY, [0, 1000], [0, -80]);
+  const yBgSlow = useTransform(scrollY, [0, 1000], [0, 300]);
+  const yBgMed = useTransform(scrollY, [0, 1000], [0, 150]);
+  const yVideo = useTransform(scrollY, [0, 1000], [0, -120]);
   const opacityFade = useTransform(scrollY, [0, 600], [1, 0.3]);
 
   return (
@@ -112,7 +112,7 @@ export const Hero: React.FC = () => {
           ease: "easeInOut"
         }}
         style={{ y: yBgSlow }} 
-        className="absolute top-[-20%] left-[-15%] w-[70%] h-[70%] rounded-full bg-brand-gold/[0.05] blur-[160px] pointer-events-none" 
+        className="absolute top-[-20%] left-[-15%] w-[70%] h-[70%] rounded-full bg-brand-violet/[0.08] blur-[160px] pointer-events-none" 
       />
       <motion.div 
         animate={{
@@ -126,7 +126,7 @@ export const Hero: React.FC = () => {
           ease: "easeInOut"
         }}
         style={{ y: yBgSlow }} 
-        className="absolute bottom-[-20%] right-[-15%] w-[60%] h-[60%] rounded-full bg-brand-bronze/[0.04] blur-[180px] pointer-events-none" 
+        className="absolute bottom-[-20%] right-[-15%] w-[60%] h-[60%] rounded-full bg-brand-fuchsia/[0.05] blur-[180px] pointer-events-none" 
       />
       {/* Mid-layer orb — oliva */}
       <motion.div 
@@ -142,7 +142,7 @@ export const Hero: React.FC = () => {
           delay: 8,
         }}
         style={{ y: yBgMed }} 
-        className="absolute top-[30%] right-[10%] w-[40%] h-[40%] rounded-full bg-brand-gold-dark/[0.03] blur-[150px] pointer-events-none" 
+        className="absolute top-[30%] right-[10%] w-[40%] h-[40%] rounded-full bg-brand-violet-dark/[0.1] blur-[150px] pointer-events-none" 
       />
       
       {/* Cinematic noise texture */}
@@ -153,7 +153,7 @@ export const Hero: React.FC = () => {
         initial={{ scaleY: 0 }}
         animate={{ scaleY: 1 }}
         transition={{ duration: 1.5, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-[350px] bg-gradient-to-b from-brand-gold-dark/25 via-brand-coffee/10 to-transparent pointer-events-none origin-top"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-[350px] bg-gradient-to-b from-brand-violet-light/30 via-brand-fuchsia/10 to-transparent pointer-events-none origin-top"
       />
 
       <motion.div 
@@ -169,18 +169,18 @@ export const Hero: React.FC = () => {
           className="lg:col-span-7 flex flex-col items-start space-y-6 md:space-y-8 text-left"
         >
           <motion.div variants={itemVariants}>
-            <Badge variant="gold" className="flex items-center gap-2 px-3 py-1 bg-brand-gold/[0.04] border border-brand-gold/12 rounded-full">
-              <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
+            <Badge variant="gold" className="flex items-center gap-2 px-3 py-1 bg-brand-violet/[0.08] border border-brand-violet/20 rounded-full">
+              <Sparkles className="w-3.5 h-3.5 text-brand-fuchsia" />
               Estudio Creativo Audiovisual
             </Badge>
           </motion.div>
 
           <motion.h1
             variants={itemVariants}
-            className="font-sans font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1] text-brand-text tracking-tight text-balance"
+            className="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] text-brand-text tracking-tighter text-balance drop-shadow-xl"
           >
             <AnimatedWords text="Construimos" />
-            <span className="font-display italic font-normal text-brand-gold pr-2">
+            <span className="font-display font-semibold italic text-brand-fuchsia pr-2 drop-shadow-lg">
               <AnimatedWords text="el contenido del mes" />
             </span>
             <AnimatedWords text="para tu negocio." />
@@ -243,12 +243,12 @@ export const Hero: React.FC = () => {
 
             {/* Cinematic overlay over video */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-black/20 to-brand-black/90 z-10" />
-            <div className="absolute inset-0 bg-brand-gold/[0.01] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
+            <div className="absolute inset-0 bg-brand-violet/[0.05] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
             
             <div className="absolute inset-0 flex flex-col justify-end p-8 z-20 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-brand-black/80 backdrop-blur-xl flex items-center justify-center border border-white/10 shadow-lg">
-                  <Video className="w-4 h-4 text-brand-gold" />
+                  <Video className="w-4 h-4 text-brand-fuchsia" />
                 </div>
                 <div>
                   <h4 className="text-[10px] font-bold text-brand-text uppercase tracking-wider drop-shadow-md">Afterbun Showreel</h4>
@@ -257,7 +257,7 @@ export const Hero: React.FC = () => {
               </div>
               
               <div
-                className="w-full py-4 rounded-xl bg-white/5 backdrop-blur-xl text-brand-text border border-white/10 flex items-center justify-center gap-3 cursor-pointer hover:bg-brand-gold hover:text-brand-coffee transition-colors duration-500 shadow-lg"
+                className="w-full py-4 rounded-xl bg-white/5 backdrop-blur-xl text-brand-text border border-white/10 flex items-center justify-center gap-3 cursor-pointer hover:bg-brand-fuchsia hover:text-white transition-colors duration-500 shadow-lg"
                 onClick={() => scrollTo('portfolio-marquee')}
               >
                 <div className="w-5 h-5 rounded-full bg-white text-black flex items-center justify-center">

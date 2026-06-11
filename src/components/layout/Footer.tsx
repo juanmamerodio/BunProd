@@ -44,7 +44,7 @@ export const Footer: React.FC = () => {
               className="flex items-center gap-2.5 group cursor-pointer"
             >
               <span className="font-display font-black text-2xl tracking-[0.12em] text-brand-cream group-hover:text-brand-gold transition-colors duration-500">
-                AFTERBUN
+                AFTERBOW
               </span>
               <Sparkles className="w-4 h-4 text-brand-gold opacity-70" />
             </a>
@@ -105,10 +105,10 @@ export const Footer: React.FC = () => {
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-brand-gold/60 flex-shrink-0" />
                 <a
-                  href="mailto:hola@afterbun.com"
+                  href="mailto:hola@afterbow.com"
                   className="text-sm text-brand-muted/80 hover:text-brand-gold transition-colors duration-300"
                 >
-                  hola@afterbun.com
+                  hola@afterbow.com
                 </a>
               </li>
               <li className="text-xs text-brand-muted/50 leading-relaxed pl-7">
@@ -122,7 +122,7 @@ export const Footer: React.FC = () => {
         {/* ── Bottom bar ── */}
         <div className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-brand-muted/50 text-center sm:text-left">
-            Afterbun © {new Date().getFullYear()}.{' '}
+            Afterbow © {new Date().getFullYear()}.{' '}
             <span className="text-brand-muted/70">
               Construimos el contenido de tu mes.
             </span>

@@ -32,11 +32,10 @@ export const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-cinematic ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-cinematic ${isScrolled
           ? 'bg-brand-black/70 backdrop-blur-2xl border-b border-brand-gold/[0.06] py-3.5 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
           : 'bg-transparent py-5 md:py-6'
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center">
         {/* ── Logo ── */}
@@ -49,7 +48,7 @@ export const Header: React.FC = () => {
           className="flex items-center gap-2.5 cursor-pointer group relative z-50"
         >
           <span className="font-display font-black text-xl md:text-2xl tracking-[0.12em] text-brand-cream group-hover:text-brand-gold transition-colors duration-500">
-            AFTERBUN
+            AFTERBOW
           </span>
           <motion.span
             animate={{ rotate: [0, 8, -5, 0] }}
