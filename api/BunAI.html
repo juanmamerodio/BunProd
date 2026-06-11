@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Afterbow | Método Delta</title>
+    
+    <!-- Tipografía Inter (Estilo limpio / iOS) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS para utilidades rápidas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Iconos Phosphor (Premium, trazo fino) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Spline 3D Viewer (Para el efecto Afterbow) -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.51/build/spline-viewer.js"></script>
+
+    <style>
+        :root {
+            /* ── Brand Color System (CSS Custom Properties for JS access) ── */
+            --color-brand-black: #090820;
+            --color-brand-dark: #0D0B28;
+            --color-brand-surface: #110F30;
+            --color-brand-card: #16143A;
+            --color-brand-border: #2A2660;
+            --color-brand-violet: #7030EF;
+            --color-brand-violet-light: #8B4FF5;
+            --color-brand-violet-dark: #5520C4;
+            --color-brand-fuchsia: #DB1FFF;
+            --color-brand-fuchsia-light: #E54FFF;
+            --color-brand-cream: #F0EEFF;
+            --color-brand-muted: #8B87C0;
+            --color-brand-text: #FFFFFF;
+
+            /* ── Cinematic Timing Functions ── */
+            --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-lens: cubic-bezier(0.22, 0.68, 0, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-brand-black);
+            color: var(--color-brand-text);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* 3D Background Container */
+        #spline-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            /* Permite que el usuario interactúe con el 3D moviendo el mouse */
+            pointer-events: auto; 
+        }
+
+        /* Capa de viñeta para asegurar que el texto sea legible sobre el 3D */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 50%, rgba(9, 8, 32, 0.2) 0%, rgba(9, 8, 32, 0.9) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Utilidades Glassmorphism */
+        .glass-panel {
+            background: rgba(22, 20, 58, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(42, 38, 96, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-input {
+            background: rgba(13, 11, 40, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--color-brand-border);
+            color: var(--color-brand-cream);
+            transition: all 0.4s var(--ease-cinematic);
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: var(--color-brand-violet-light);
+            box-shadow: 0 0 0 4px rgba(112, 48, 239, 0.15);
+            background: rgba(17, 15, 48, 0.8);
+        }
+
+        /* Botón estilo Afterbow */
+        .btn-glow {
+            background: linear-gradient(135deg, var(--color-brand-violet), var(--color-brand-fuchsia));
+            color: white;
+            transition: all 0.3s var(--ease-cinematic);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, var(--color-brand-fuchsia), var(--color-brand-violet));
+            z-index: -1;
+            transition: opacity 0.5s var(--ease-cinematic);
+            opacity: 0;
+        }
+
+        .btn-glow:hover::before {
+            opacity: 1;
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px var(--color-brand-violet-light);
+        }
+
+        /* Transiciones de Vista */
+        .view-section {
+            transition: opacity 0.8s var(--ease-cinematic), transform 0.8s var(--ease-cinematic), filter 0.8s var(--ease-cinematic);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.98);
+            filter: blur(10px);
+        }
+
+        .view-section.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+            filter: blur(0px);
+            z-index: 10;
+        }
+
+        .view-section.exit-up {
+            transform: translateY(-10vh) scale(0.95);
+            opacity: 0;
+            filter: blur(10px);
+        }
+
+        /* Carrusel estilo Instagram / iOS */
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: 2rem 10vw;
+            gap: 2rem;
+            height: 100%;
+            align-items: center;
+            /* Ocultar scrollbar pero permitir scroll */
+            scrollbar-width: none; 
+        }
+        
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-card {
+            scroll-snap-align: center;
+            min-width: 85vw;
+            max-width: 85vw;
+            height: 70vh;
+            max-height: 600px;
+            border-radius: 24px;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transform: scale(0.95);
+            opacity: 0.5;
+            transition: all 0.5s var(--ease-cinematic);
+        }
+
+        @media (min-width: 768px) {
+            .carousel-card {
+                min-width: 400px;
+                max-width: 450px;
+            }
+        }
+
+        /* Efecto cuando la tarjeta está en foco (JS lo controlará con IntersectionObserver, o CSS nativo en navegadores modernos) */
+        .carousel-card.in-view {
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5), 0 0 0 1px var(--color-brand-border);
+        }
+
+        /* Scroll Progress Indicator */
+        .scroll-indicator {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .scroll-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--color-brand-border);
+            transition: all 0.3s var(--ease-cinematic);
+        }
+        .scroll-dot.active {
+            background-color: var(--color-brand-violet-light);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        /* Animación de carga cinemática */
+        .loader-ring {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(112, 48, 239, 0.1);
+            border-top-color: var(--color-brand-fuchsia);
+            border-radius: 50%;
+            animation: spin 1.5s var(--ease-cinematic) infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .text-gradient {
+            background: linear-gradient(to right, var(--color-brand-text), var(--color-brand-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .text-gradient-brand {
+            background: linear-gradient(to right, var(--color-brand-violet-light), var(--color-brand-fuchsia));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SPLINE 3D BACKGROUND -->
+    <!-- Nota: Puedes reemplazar la URL por tu propio diseño exportado de Spline.design -->
+    
+    <div class="bg-overlay"></div>
+
+    <!-- NAV BAR MINIMALISTA -->
+    <nav class="fixed top-0 w-full p-6 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
+        <div class="font-bold text-xl tracking-tighter">AFTERBOW<span class="text-[var(--color-brand-violet)]">.</span></div>
+        <div class="text-sm font-medium tracking-widest uppercase opacity-50">Delta Engine</div>
+    </nav>
+
+    <!-- VIEW 1: HERO INPUT -->
+    <section id="view-hero" class="view-section active justify-center px-6 md:px-20">
+        <div class="max-w-3xl mx-auto w-full">
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-gradient">
+                Ingresa tu proyecto. <br/>
+                <span class="text-gradient-brand">Desata el Método Delta.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-[var(--color-brand-muted)] mb-8 font-light">
+                La inteligencia artificial configurada bajo estándares Afterbow. Descubrí tu nicho, vehículo, oferta y guion en segundos.
+            </p>
+            
+            <form id="delta-form" class="relative group">
+                <textarea 
+                    id="idea-input" 
+                    rows="4" 
+                    class="glass-input w-full rounded-2xl p-6 text-lg resize-none placeholder-[var(--color-brand-muted)]"
+                    placeholder="Ej: Tengo una agencia de marketing pero no se a quien venderle, o soy programador y quiero armar un SaaS para contadores..."
+                    required></textarea>
+                
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-xs text-[var(--color-brand-muted)] flex items-center gap-1">
+                        <i class="ph ph-lock"></i> Procesamiento local seguro
+                    </span>
+                    <button type="submit" class="btn-glow px-8 py-3 rounded-full font-semibold flex items-center gap-2">
+                        Procesar Delta <i class="ph ph-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- VIEW 2: LOADING -->
+    <section id="view-loading" class="view-section justify-center items-center">
+        <div class="flex flex-col items-center">
+            <div class="loader-ring mb-8"></div>
+            <h2 class="text-2xl font-semibold mb-2">Construyendo arquitectura de negocio...</h2>
+            <p id="loading-text" class="text-[var(--color-brand-muted)] text-sm">Analizando variables del mercado...</p>
+        </div>
+    </section>
+
+    <!-- VIEW 3: RESULTS (CAROUSEL) -->
+    <section id="view-results" class="view-section">
+        <div class="mt-24 mb-4 text-center px-6">
+            <h2 class="text-2xl font-bold">Fundación <span class="text-gradient-brand">Delta</span> Completada</h2>
+            <p class="text-[var(--color-brand-muted)] text-sm mt-1">Desliza para ver la estrategia</p>
+        </div>
+
+        <div class="carousel-container" id="carousel">
+            <!-- Cards will be injected here via JS -->
+        </div>
+
+        <div class="scroll-indicator pb-10" id="scroll-dots">
+            <!-- Dots will be injected here -->
+        </div>
+        
+        <div class="absolute bottom-8 left-0 w-full flex justify-center z-20">
+            <button id="btn-reset" class="glass-panel px-6 py-2 rounded-full text-sm font-medium hover:bg-white/5 transition-colors flex items-center gap-2">
+                <i class="ph ph-arrow-counter-clockwise"></i> Nueva Consulta
+            </button>
+        </div>
+    </section>
+
+    <script>
+        // --- CONSTANTES Y CONFIGURACIÓN ---
+        // La API key se inyecta desde el entorno, por instrucción del sistema.
+        const apiKey = ""; 
+        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        
+        // --- GESTIÓN DE VISTAS (ESTADO UI) ---
+        const views = {
+            hero: document.getElementById('view-hero'),
+            loading: document.getElementById('view-loading'),
+            results: document.getElementById('view-results')
+        };
+
+        function transitionTo(viewName) {
+            // Salida de las vistas actuales
+            Object.values(views).forEach(view => {
+                if(view.classList.contains('active')) {
+                    view.classList.remove('active');
+                    view.classList.add('exit-up');
+                }
+            });
+
+            // Entrada de la nueva vista tras un pequeño delay para el efecto cinemático
+            setTimeout(() => {
+                Object.values(views).forEach(view => view.classList.remove('exit-up'));
+                views[viewName].classList.add('active');
+            }, 400); // 400ms match con CSS transition
+        }
+
+        // --- LÓGICA DE LOADING TEXT ---
+        const loadingTexts = [
+            "Analizando variables del mercado...",
+            "Segmentando nicho de alta rentabilidad...",
+            "Diseñando vehículo de servicio...",
+            "Estructurando Grand Slam Offer...",
+            "Redactando guion de retención..."
+        ];
+        let loadingInterval;
+
+        function startLoadingText() {
+            let i = 0;
+            const el = document.getElementById('loading-text');
+            el.innerText = loadingTexts[0];
+            loadingInterval = setInterval(() => {
+                i = (i + 1) % loadingTexts.length;
+                el.style.opacity = 0;
+                setTimeout(() => {
+                    el.innerText = loadingTexts[i];
+                    el.style.opacity = 1;
+                }, 300);
+            }, 2000);
+        }
+
+        function stopLoadingText() {
+            clearInterval(loadingInterval);
+        }
+
+        // --- CONEXIÓN SEGURA CON VERCEL SERVERLESS FUNCTION ---
+        async function fetchDeltaStrategy(ideaText, retryCount = 0) {
+            // Ahora no apuntamos a Google, apuntamos a nuestra propia API en Vercel
+            const endpoint = `/api/delta`; 
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ idea: ideaText })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error del servidor: ${response.status}`);
+                }
+
+                const result = await response.json();
+                return result;
+
+            } catch (error) {
+                console.error("Error en la API:", error);
+                
+                // Exponential Backoff
+                if (retryCount < 5) {
+                    const delay = Math.pow(2, retryCount) * 1000;
+                    await new Promise(res => setTimeout(res, delay));
+                    return fetchDeltaStrategy(ideaText, retryCount + 1);
+                } else {
+                    throw new Error("No se pudo conectar con el motor Delta tras varios intentos.");
+                }
+            }
+        }
+
+        // --- UI RENDER (CAROUSEL) ---
+        function createCardHTML(title, icon, content, colorClass) {
+            // Formatear el contenido para respetar saltos de línea (ideal para el guion)
+            const formattedContent = content.replace(/\n/g, '<br/>');
+            
+            return `
+                <div class="carousel-card glass-panel flex-shrink-0">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-[var(--color-brand-surface)] border border-[var(--color-brand-border)] ${colorClass}">
+                            <i class="ph ${icon} text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold tracking-tight">${title}</h3>
+                    </div>
+                    <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar text-[var(--color-brand-cream)] font-light leading-relaxed text-sm md:text-base">
+                        ${formattedContent}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResults(data) {
+            const carousel = document.getElementById('carousel');
+            const dotsContainer = document.getElementById('scroll-dots');
+            
+            carousel.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            const cards = [
+                { title: 'Fase 1: Nicho', icon: 'ph-target', content: data.nicho, color: 'text-[var(--color-brand-violet-light)]' },
+                { title: 'Fase 2: Vehículo', icon: 'ph-rocket-launch', content: data.vehiculo, color: 'text-[var(--color-brand-fuchsia)]' },
+                { title: 'Fase 3: Oferta', icon: 'ph-diamond', content: data.oferta_final, color: 'text-[var(--color-brand-violet-light)]' },
+                { title: 'Guion Fundacional', icon: 'ph-video-camera', content: data.guion_video, color: 'text-[var(--color-brand-text)]' }
+            ];
+
+            cards.forEach((card, index) => {
+                carousel.insertAdjacentHTML('beforeend', createCardHTML(card.title, card.icon, card.content, card.color));
+                dotsContainer.insertAdjacentHTML('beforeend', `<div class="scroll-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>`);
+            });
+
+            setupCarouselObserver();
+        }
+
+        function setupCarouselObserver() {
+            const carousel = document.getElementById('carousel');
+            const cards = carousel.querySelectorAll('.carousel-card');
+            const dots = document.querySelectorAll('.scroll-dot');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // Actualizar dots
+                        const index = Array.from(cards).indexOf(entry.target);
+                        dots.forEach((dot, i) => {
+                            dot.classList.toggle('active', i === index);
+                        });
+                    } else {
+                        entry.target.classList.remove('in-view');
+                    }
+                });
+            }, {
+                root: carousel,
+                threshold: 0.6 // La tarjeta debe estar 60% visible
+            });
+
+            cards.forEach(card => observer.observe(card));
+        }
+
+        // --- EVENT LISTENERS ---
+        document.getElementById('delta-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ideaInput = document.getElementById('idea-input').value.trim();
+            
+            if (!ideaInput) return;
+
+            // 1. Mostrar pantalla de carga
+            transitionTo('loading');
+            startLoadingText();
+
+            try {
+                // 2. Llamada a la API
+                const strategyData = await fetchDeltaStrategy(ideaInput);
+                
+                // 3. Renderizar resultados
+                renderResults(strategyData);
+                
+                // 4. Mostrar resultados
+                stopLoadingText();
+                transitionTo('results');
+
+            } catch (error) {
+                stopLoadingText();
+                console.error(error);
+                // Custom UI Error MessageBox (en lugar de alert)
+                document.getElementById('loading-text').innerHTML = `<span class="text-red-400">Error en la arquitectura: ${error.message}</span><br><button onclick="transitionTo('hero')" class="mt-4 underline">Volver a intentar</button>`;
+                document.querySelector('.loader-ring').style.borderColor = 'rgba(255,0,0,0.2)';
+                document.querySelector('.loader-ring').style.borderTopColor = 'red';
+                document.querySelector('.loader-ring').style.animation = 'none';
+            }
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            document.getElementById('idea-input').value = '';
+            transitionTo('hero');
+            // Reset loader style in case of previous error
+            document.querySelector('.loader-ring').style = '';
+        });
+
+        // Init: Ensure Hero is active on load (handled by CSS, but good measure)
+        setTimeout(() => {
+            document.getElementById('view-hero').classList.add('active');
+        }, 100);
+
+    </script>
+</body>
+</html>
