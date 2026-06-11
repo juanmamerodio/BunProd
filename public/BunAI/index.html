@@ -682,7 +682,251 @@
         .reset-row {
             display: flex;
             justify-content: center;
-            padding-bottom: 3rem;
+            padding-bottom: 2rem;
+        }
+
+        /* ══════════════════════════════════════════════
+           COPY BUTTON — En cada card
+        ══════════════════════════════════════════════ */
+        .card-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-brand-muted);
+            background: rgba(112, 48, 239, 0.07);
+            border: 1px solid rgba(112, 48, 239, 0.2);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.25s var(--ease-out-expo);
+            margin-top: auto;
+            align-self: flex-start;
+        }
+        .card-copy-btn:hover {
+            color: #fff;
+            background: rgba(112, 48, 239, 0.18);
+            border-color: var(--color-brand-violet-l);
+            transform: translateY(-1px);
+        }
+        .card-copy-btn.copied {
+            color: #6ee7b7;
+            border-color: rgba(110,231,183,0.4);
+            background: rgba(110,231,183,0.08);
+        }
+
+        /* ══════════════════════════════════════════════
+           SCRIPT SECTION — Guion full-width
+        ══════════════════════════════════════════════ */
+        .script-section {
+            max-width: 760px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+        .script-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .script-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .script-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(219,31,255,0.2), rgba(112,48,239,0.15));
+            border: 1px solid rgba(219,31,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--color-brand-fuchsia-l);
+            box-shadow: 0 0 20px rgba(219,31,255,0.2);
+            flex-shrink: 0;
+        }
+        .script-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #fff;
+        }
+        .script-subtitle {
+            font-size: 0.72rem;
+            color: var(--color-brand-muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-top: 0.15rem;
+        }
+        .script-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: 999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--color-brand-fuchsia-l);
+            background: rgba(219,31,255,0.08);
+            border: 1px solid rgba(219,31,255,0.3);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s var(--ease-out-expo);
+            flex-shrink: 0;
+        }
+        .script-copy-btn:hover {
+            color: #fff;
+            background: rgba(219,31,255,0.18);
+            border-color: var(--color-brand-fuchsia);
+            box-shadow: 0 0 20px rgba(219,31,255,0.25);
+            transform: translateY(-1px);
+        }
+        .script-copy-btn.copied {
+            color: #6ee7b7;
+            border-color: rgba(110,231,183,0.4);
+            background: rgba(110,231,183,0.08);
+        }
+        .script-panel {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .script-block {
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid rgba(112,48,239,0.12);
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            transition: background 0.2s ease;
+        }
+        .script-block:last-child { border-bottom: none; }
+        .script-block:hover { background: rgba(112,48,239,0.05); }
+        .script-block-label {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            min-width: 64px;
+        }
+        .script-block-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .script-block-name {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .script-block-text {
+            font-size: 0.92rem;
+            line-height: 1.8;
+            color: var(--color-brand-cream);
+            font-weight: 300;
+            flex: 1;
+            padding-top: 0.4rem;
+        }
+
+        /* Temas por bloque de guion */
+        .sblock-hook    .script-block-icon { background: rgba(219,31,255,0.15); color: var(--color-brand-fuchsia-l); border: 1px solid rgba(219,31,255,0.25); }
+        .sblock-hook    .script-block-name { color: var(--color-brand-fuchsia-l); }
+        .sblock-hook    .script-block-text { color: #fff; font-weight: 400; }
+        .sblock-problema .script-block-icon { background: rgba(255,100,80,0.12); color: #ff9580; border: 1px solid rgba(255,100,80,0.2); }
+        .sblock-problema .script-block-name { color: #ff9580; }
+        .sblock-solucion .script-block-icon { background: rgba(112,48,239,0.18); color: var(--color-brand-violet-l); border: 1px solid rgba(112,48,239,0.3); }
+        .sblock-solucion .script-block-name { color: var(--color-brand-violet-l); }
+        .sblock-prueba   .script-block-icon { background: rgba(80,200,140,0.12); color: #6ee7b7; border: 1px solid rgba(80,200,140,0.2); }
+        .sblock-prueba   .script-block-name { color: #6ee7b7; }
+        .sblock-cta      .script-block-icon { background: linear-gradient(135deg,rgba(219,31,255,0.2),rgba(112,48,239,0.2)); color: #fff; border: 1px solid rgba(219,31,255,0.35); box-shadow: 0 0 16px rgba(219,31,255,0.2); }
+        .sblock-cta      .script-block-name { color: #fff; }
+        .sblock-cta      .script-block-text { color: #fff; font-weight: 400; }
+
+        /* Etiqueta de número de paso */
+        .script-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.4);
+            margin-top: 0.25rem;
+        }
+
+        /* Divider entre pilares y guion */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 760px;
+            margin: 0.5rem auto 1.5rem;
+            padding: 0 1.5rem;
+        }
+        .section-divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(219,31,255,0.25), transparent);
+        }
+        .section-divider-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(219,31,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        /* Toast de copia */
+        .copy-toast {
+            position: fixed;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(1rem);
+            z-index: 300;
+            background: rgba(14,12,42,0.95);
+            border: 1px solid rgba(110,231,183,0.35);
+            border-radius: 12px;
+            padding: 0.65rem 1.25rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #6ee7b7;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s var(--ease-out-expo);
+        }
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* ══════════════════════════════════════════════
@@ -848,7 +1092,7 @@
                     <div class="glass-panel" style="flex:1; min-width:140px; border-radius:16px;">
                         <div class="glass-inner" style="padding:1rem 1.25rem;">
                             <div style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-brand-muted);margin-bottom:0.25rem;">Cuadrantes</div>
-                            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.95rem;color:var(--color-brand-fuchsia-l);">4 Estratégicos</div>
+                            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.95rem;color:var(--color-brand-fuchsia-l);">3 Pilares + Guion</div>
                         </div>
                     </div>
                     <div class="glass-panel" style="flex:1; min-width:140px; border-radius:16px;">
@@ -893,7 +1137,7 @@
                 </h2>
                 <p class="results-hint">
                     <i class="ph ph-hand-swipe-left"></i>
-                    Desliza para navegar los cuadrantes
+                    Desliza los 3 pilares estratégicos
                 </p>
             </div>
 
@@ -902,6 +1146,40 @@
             </div>
 
             <div class="scroll-dots" id="scroll-dots"></div>
+
+            <!-- Divisor visual entre pilares y guion -->
+            <div class="section-divider" id="script-divider" style="display:none;">
+                <div class="section-divider-line"></div>
+                <div class="section-divider-label">
+                    <i class="ph ph-clapperboard"></i>
+                    Guion de Video
+                </div>
+                <div class="section-divider-line"></div>
+            </div>
+
+            <!-- Sección del Guion (full-width, separada) -->
+            <div class="script-section" id="script-section" style="display:none;">
+                <div class="script-header">
+                    <div class="script-title-wrap">
+                        <div class="script-icon">
+                            <i class="ph ph-clapperboard"></i>
+                        </div>
+                        <div>
+                            <div class="script-title">Guion de Video</div>
+                            <div class="script-subtitle">30–60 seg · Video Vertical</div>
+                        </div>
+                    </div>
+                    <button class="script-copy-btn" id="btn-copy-script">
+                        <i class="ph ph-copy"></i>
+                        Copiar guion
+                    </button>
+                </div>
+                <div class="glass-panel script-panel">
+                    <div class="glass-inner" id="script-blocks">
+                        <!-- Bloques inyectados por JS -->
+                    </div>
+                </div>
+            </div>
 
             <div class="reset-row">
                 <button id="btn-reset" class="btn-ghost">
@@ -921,6 +1199,12 @@
             Error de Servidor
         </div>
         <div class="error-toast-msg" id="error-toast-msg">—</div>
+    </div>
+
+    <!-- ─── COPY TOAST ─── -->
+    <div class="copy-toast" id="copy-toast">
+        <i class="ph ph-check-circle"></i>
+        <span id="copy-toast-msg">Copiado al portapapeles</span>
     </div>
 
     <!-- ══════════════════════════════════════════════
@@ -1082,20 +1366,46 @@
             return data;
         }
 
-        /* ─── RENDERIZADO DE TARJETAS ─── */
+        /* ─── COPY TOAST ─── */
+        function showCopyToast(msg = 'Copiado al portapapeles') {
+            const toast = document.getElementById('copy-toast');
+            document.getElementById('copy-toast-msg').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        async function copyText(text, btn) {
+            try {
+                await navigator.clipboard.writeText(text);
+                if (btn) {
+                    const origHTML = btn.innerHTML;
+                    btn.classList.add('copied');
+                    btn.innerHTML = '<i class="ph ph-check"></i> ¡Copiado!';
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = origHTML;
+                    }, 2000);
+                }
+                showCopyToast();
+            } catch (e) {
+                showCopyToast('Error al copiar');
+            }
+        }
+
+        /* ─── RENDERIZADO DE TARJETAS — 3 PILARES ─── */
         const cardDefs = [
-            { key: 'nicho',        title: 'Cuadrante 1: Nicho',    icon: 'ph-target-focus',    theme: 'violet', label: 'Nicho' },
-            { key: 'vehiculo',     title: 'Cuadrante 2: Vehículo', icon: 'ph-rocket-launch',   theme: 'fuchsia', label: 'Vehículo' },
-            { key: 'oferta_final', title: 'Cuadrante 3: Oferta',   icon: 'ph-diamond',         theme: 'violet', label: 'Oferta' },
-            { key: 'guion_video',  title: 'Cuadrante 4: Guion',    icon: 'ph-clapperboard',    theme: 'fuchsia', label: 'Guion' }
+            { key: 'nicho',        title: 'Pilar I · Nicho',      icon: 'ph-target-focus',  theme: 'violet',  label: 'Nicho Estratégico',  num: '01' },
+            { key: 'vehiculo',     title: 'Pilar II · Vehículo',  icon: 'ph-rocket-launch', theme: 'fuchsia', label: 'Vehículo de Mercado', num: '02' },
+            { key: 'oferta_final', title: 'Pilar III · Oferta',   icon: 'ph-diamond',       theme: 'violet',  label: 'Grand Slam Offer',    num: '03' }
         ];
 
-        function buildCard(def, content) {
+        function buildCard(def, content, rawContent) {
             const safeContent = content
                 ? content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')
                 : '<em style="opacity:0.5">Sin datos</em>';
+            const cardId = `card-copy-${def.key}`;
             return `
-            <div class="carousel-card glass-panel" data-tilt>
+            <div class="carousel-card glass-panel" data-tilt data-raw="${encodeURIComponent(rawContent || '')}">
                 <div class="glass-inner" style="display:flex;flex-direction:column;height:100%;">
                     <div class="card-header">
                         <div class="card-badge ${def.theme}">
@@ -1106,13 +1416,114 @@
                             <div class="card-icon-box ${def.theme}">
                                 <i class="ph ${def.icon}"></i>
                             </div>
-                            <div class="card-title">${def.title}</div>
+                            <div>
+                                <div class="card-title">${def.title}</div>
+                                <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-brand-muted);margin-top:0.2rem;">Cuadrante ${def.num}</div>
+                            </div>
                         </div>
                     </div>
                     <div class="card-divider"></div>
                     <div class="card-body">${safeContent}</div>
+                    <div style="padding:0.75rem 1.75rem 1.25rem;">
+                        <button class="card-copy-btn" id="${cardId}">
+                            <i class="ph ph-copy"></i>
+                            Copiar
+                        </button>
+                    </div>
                 </div>
             </div>`;
+        }
+
+        /* ─── PARSEO DEL GUION ─── */
+        const scriptBlocks = [
+            { key: 'hook',    label: 'Hook',         icon: 'ph-lightning',      cls: 'sblock-hook',     num: 1,
+              keywords: ['hook', 'gancho', '\u00bfcómo', '¿qué pasaría', 'imagina', '¿sabías', 'stop'] },
+            { key: 'problema', label: 'Problema',    icon: 'ph-warning',        cls: 'sblock-problema',  num: 2,
+              keywords: ['problema', 'error', 'falla', 'pero', 'sin embargo', 'la realidad', 'el 90%'] },
+            { key: 'solucion', label: 'Solución',    icon: 'ph-check-circle',   cls: 'sblock-solucion',  num: 3,
+              keywords: ['solución', 'solucion', 'presento', 'creamos', 'desarrollamos', 'nuestro método', 'por eso'] },
+            { key: 'prueba',  label: 'Prueba Social', icon: 'ph-users-three',   cls: 'sblock-prueba',    num: 4,
+              keywords: ['prueba', 'clientes', 'resultados', 'lograron', 'caso', 'ya', 'hemos ayudado'] },
+            { key: 'cta',     label: 'CTA',          icon: 'ph-arrow-square-out', cls: 'sblock-cta',    num: 5,
+              keywords: ['cta', 'ahora', 'haz click', 'link', 'comenta', 'escríbeme', 'agenda', 'reserva', 'sigue'] }
+        ];
+
+        function parseScript(rawScript) {
+            if (!rawScript) return [];
+
+            // Intentar parseo por prefijos explícitos (HOOK:, PROBLEMA:, SOLUCIÓN:, PRUEBA SOCIAL:, CTA:)
+            const prefixMap = [
+                { prefix: /^HOOK:/i,         block: scriptBlocks[0] },
+                { prefix: /^PROBLEMA:/i,      block: scriptBlocks[1] },
+                { prefix: /^SOLUC[IÍ]ON:/i,   block: scriptBlocks[2] },
+                { prefix: /^PRUEBA\s*SOCIAL:/i, block: scriptBlocks[3] },
+                { prefix: /^CTA:/i,           block: scriptBlocks[4] }
+            ];
+
+            const lines = rawScript.split(/\n+/).map(l => l.trim()).filter(l => l.length > 0);
+
+            // Agrupar líneas por bloque según prefijos
+            const grouped = [];
+            let current = null;
+            for (const line of lines) {
+                const match = prefixMap.find(p => p.prefix.test(line));
+                if (match) {
+                    const text = line.replace(match.prefix, '').trim();
+                    current = { block: match.block, text };
+                    grouped.push(current);
+                } else if (current) {
+                    current.text += ' ' + line;
+                } else {
+                    // Texto antes de cualquier prefijo -> asignar a hook
+                    current = { block: scriptBlocks[0], text: line };
+                    grouped.push(current);
+                }
+            }
+
+            // Si se encontraron al menos 3 bloques por prefijo, usar ese resultado
+            if (grouped.length >= 3) return grouped;
+
+            // Fallback: distribución proporcional en 5 partes
+            const total = lines.length;
+            if (total === 0) return [{ block: scriptBlocks[0], text: rawScript }];
+            const chunkSize = Math.max(1, Math.floor(total / 5));
+            const results = [];
+            for (let i = 0; i < scriptBlocks.length; i++) {
+                const start = i * chunkSize;
+                const end   = (i === scriptBlocks.length - 1) ? total : (i + 1) * chunkSize;
+                const chunk = lines.slice(start, end).join(' ');
+                if (chunk.trim()) results.push({ block: scriptBlocks[i], text: chunk });
+            }
+            return results.length > 0 ? results : [{ block: scriptBlocks[0], text: rawScript }];
+        }
+
+        function renderScript(rawScript) {
+            const section  = document.getElementById('script-section');
+            const divider  = document.getElementById('script-divider');
+            const blocksEl = document.getElementById('script-blocks');
+            if (!rawScript) { section.style.display = 'none'; divider.style.display = 'none'; return; }
+
+            const parsed = parseScript(rawScript);
+            blocksEl.innerHTML = parsed.map(({ block, text }) => `
+                <div class="script-block ${block.cls}">
+                    <div class="script-block-label">
+                        <div class="script-block-icon">
+                            <i class="ph ${block.icon}"></i>
+                        </div>
+                        <div class="script-block-name">${block.label}</div>
+                        <div class="script-step-num">${block.num}</div>
+                    </div>
+                    <div class="script-block-text">${text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+                </div>
+            `).join('');
+
+            section.style.display  = 'block';
+            divider.style.display  = 'flex';
+
+            // Evento copiar guion completo
+            document.getElementById('btn-copy-script').onclick = () => {
+                copyText(rawScript, document.getElementById('btn-copy-script'));
+            };
         }
 
         function renderResults(data) {
@@ -1122,14 +1533,28 @@
             dotsEl.innerHTML   = '';
 
             cardDefs.forEach((def, i) => {
-                carousel.insertAdjacentHTML('beforeend', buildCard(def, data[def.key]));
+                const raw = data[def.key] || '';
+                carousel.insertAdjacentHTML('beforeend', buildCard(def, raw, raw));
                 dotsEl.insertAdjacentHTML('beforeend',
                     `<div class="dot ${i === 0 ? 'active' : ''}" data-idx="${i}"></div>`
                 );
             });
 
-            // Tilt en todas las cards
-            carousel.querySelectorAll('.carousel-card').forEach(applyTilt);
+            // Tilt + copy en todas las cards
+            carousel.querySelectorAll('.carousel-card').forEach((card, i) => {
+                applyTilt(card);
+                const def = cardDefs[i];
+                const copyBtn = document.getElementById(`card-copy-${def.key}`);
+                if (copyBtn) {
+                    copyBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        copyText(data[def.key] || '', copyBtn);
+                    };
+                }
+            });
+
+            // Renderizar guion por separado
+            renderScript(data.guion_video || '');
             setupObserver();
         }
 
