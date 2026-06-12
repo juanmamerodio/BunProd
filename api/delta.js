@@ -37,7 +37,13 @@ El JSON debe contener EXACTAMENTE estas claves:
 1. "nicho": El nicho de mercado específico y ultra-segmentado (quién es el cliente ideal, dolor específico, demografía), explicar porqué ese nicho es el correcto para ellos.
 2. "vehiculo": El servicio exacto que llevarás al mercado (cómo pasas al cliente del punto A al B, en qué formato, canal y frecuencia) y si podría agregar/delegar algo mas para ofrecer un servicio mas completo.
 3. "oferta_final": Una Grand Slam Offer irresistible: incluye el resultado prometido, garantía, bonus, precio y mecanismo de entrega, explicá cada cosa de manera de que se entienda (deben entender de que se debe vender una transformación). 
-4. "guion_video": Un guion profesional para un video vertical de 30-60 segundos. IMPORTANTE: separá EXACTAMENTE cada sección con un prefijo en mayúscula seguido de dos puntos y salto de línea, en este orden:\nHOOK: [gancho disruptivo, máx 2 oraciones]\nPROBLEMA: [dolor específico del cliente, máx 2 oraciones]\nSOLUCIÓN: [cómo tu servicio resuelve el problema, máx 2 oraciones]\nPRUEBA SOCIAL: [resultado concreto o caso de éxito, máx 2 oraciones]\nCTA: [llamada a la acción urgente y específica, máx 2 oraciones]
+4. "guion_video": Un guion profesional para un video vertical de 30-60 segundos. IMPORTANTE: cada sección debe estar en su propia línea, usando EXACTAMENTE estos prefijos seguidos de dos puntos y un espacio:
+HOOK: [gancho disruptivo, máx 2 oraciones]
+PROBLEMA: [dolor específico del cliente, máx 2 oraciones]
+SOLUCIÓN: [cómo tu servicio resuelve el problema, máx 2 oraciones]
+PRUEBA SOCIAL: [resultado concreto o caso de éxito, máx 2 oraciones]
+CTA: [llamada a la acción urgente y específica, máx 2 oraciones]
+Cada sección en una línea separada. No las juntes en un solo párrafo.
 
 IMPORTANTE: Solo devuelve el objeto JSON. Nada más.`;
 
