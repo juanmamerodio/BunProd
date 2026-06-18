@@ -4,14 +4,20 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # Server configuration
-    PORT: int = Field(default=8000, validation_alias="PORT")
+    PORT: int = Field(default=8080, validation_alias="PORT")
     HOST: str = Field(default="0.0.0.0", validation_alias="HOST")
-    DEBUG: bool = Field(default=True, validation_alias="DEBUG")
+    DEBUG: bool = Field(default=False, validation_alias="DEBUG")
 
     # API Keys
     GEMINI_API_KEY: str = Field(default="", validation_alias="GEMINI_API_KEY")
 
+    # Google Cloud — Application Default Credentials (ADC)
+    # In Cloud Run, this is set automatically by the platform.
+    # Locally, point to a service account JSON file.
+    GOOGLE_APPLICATION_CREDENTIALS: Optional[str] = Field(default=None, validation_alias="GOOGLE_APPLICATION_CREDENTIALS")
+
     # Firebase
+    FIREBASE_PROJECT_ID: Optional[str] = Field(default=None, validation_alias="FIREBASE_PROJECT_ID")
     FIREBASE_CREDENTIALS_PATH: Optional[str] = Field(default=None, validation_alias="FIREBASE_CREDENTIALS_PATH")
 
     # Google Drive
@@ -20,8 +26,8 @@ class Settings(BaseSettings):
     GOOGLE_DRIVE_CLIENTS_FOLDER_ID: str = Field(default="", validation_alias="GOOGLE_DRIVE_CLIENTS_FOLDER_ID")
 
     # Webhooks
-    CONTENT_BRAIN_WEBHOOK_URL: str = Field(default="http://localhost:8000/api/v1/content-brain/process", validation_alias="CONTENT_BRAIN_WEBHOOK_URL")
-    PUBLISHER_WEBHOOK_URL: str = Field(default="http://localhost:8000/api/v1/publisher/trigger", validation_alias="PUBLISHER_WEBHOOK_URL")
+    CONTENT_BRAIN_WEBHOOK_URL: str = Field(default="http://localhost:8080/api/v1/content-brain/process", validation_alias="CONTENT_BRAIN_WEBHOOK_URL")
+    PUBLISHER_WEBHOOK_URL: str = Field(default="http://localhost:8080/api/v1/publisher/trigger", validation_alias="PUBLISHER_WEBHOOK_URL")
 
     class Config:
         env_file = ".env"

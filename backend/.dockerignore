@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Cache & temp files
+cache/
+*.log
+*.tmp
+
+# Version control
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Documentation (not needed in container)
+*.md

@@ -1,163 +1,265 @@
 import os
-import httpx
+import re
+import io
 import logging
+import subprocess
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
+
+from googleapiclient.http import MediaIoBaseDownload
+from googleapiclient.errors import HttpError
 
 from app.config import settings
 from app.core.firebase import init_firebase
 from app.core.drive import get_drive_service
-from app.utils.ffmpeg import validate_video_file, extract_audio
+from app.models.content import ContentStatus
 
 logger = logging.getLogger("app.services.dit")
 
+
 class DITService:
+    """
+    DIT (Digital Imaging Technician) Ingestion Service.
+
+    Handles the complete lifecycle of raw video file ingestion:
+    download → extract audio → rename in drive → trigger content-brain & clean up → log to Firestore.
+    """
+
     def __init__(self):
         self.db = init_firebase()
         self.drive = get_drive_service()
-        self.cache_dir = os.path.join(os.getcwd(), "cache")
+        # 1. Directorio efímero en el contenedor (/tmp/)
+        self.cache_dir = "/tmp/"
         os.makedirs(self.cache_dir, exist_ok=True)
 
-    async def ingest_new_drive_file(self, file_id: str, client_id: str, client_name: str, original_filename: str) -> Dict[str, Any]:
+    # ──────────────────────────────────────────────
+    # PUBLIC PIPELINE
+    # ──────────────────────────────────────────────
+
+    async def ingest_new_drive_file(
+        self,
+        file_id: str,
+        client_id: str,
+        client_name: str,
+        original_filename: str,
+    ) -> Dict[str, Any]:
         """
-        Main execution pipeline for DIT agent:
-        1. Download file from Google Drive (simulated/implemented via Drive Service).
-        2. Validate media metadata (Bitrate, Framerate, Duration).
-        3. Extract audio as mp3 and cache locally.
-        4. Rename original file following nomenclature.
-        5. Move file to Clientes/[Nombre_Cliente]/01_Brutos/[Fecha_Rodaje]/ folder in Drive.
-        6. Log "Audio_Listo_Para_Transcripción" status in Firestore.
-        7. Trigger the webhook to Content-Brain Agent.
+        Main execution pipeline for DIT agent.
         """
         logger.info(f"DIT Agent: Processing file ingestion. File ID: {file_id}, Client: {client_name}")
 
         temp_video_path = os.path.join(self.cache_dir, f"{file_id}_{original_filename}")
-        temp_audio_name = f"{file_id}_audio.mp3"
-        temp_audio_path = os.path.join(self.cache_dir, temp_audio_name)
+        temp_audio_path = os.path.join(self.cache_dir, f"{file_id}_audio.mp3")
+
+        # Nomenclatura Afterbow
+        today_str = datetime.utcnow().strftime("%Y%m%d")
+        tipo_plano, clip_nro = self._parse_video_specifications(original_filename)
+        new_filename = (
+            f"[AFT]-[{client_name.replace(' ', '_').upper()}]-"
+            f"[{today_str}]-[{tipo_plano}]-[{clip_nro}]"
+        )
+        content_id = f"cont_{file_id}"
 
         try:
-            # 1. Download file from Google Drive (Stubbed out - to be replaced with full Drive download stream)
-            await self._download_drive_file(file_id, temp_video_path)
+            # 1. Descarga Efímera con MediaIoBaseDownload en /tmp/
+            self._download_drive_file(file_id, temp_video_path)
 
-            # 2. Validation
-            if not validate_video_file(temp_video_path):
-                self._send_development_alert(f"File validation failed for file {original_filename} (ID: {file_id})")
-                raise ValueError("Video file validation failed: corrupt metadata or no video stream.")
+            # 2. Extracción de Audio a 128kbps
+            self._extract_audio_128kbps(temp_video_path, temp_audio_path)
 
-            # 3. Audio Extraction
-            success = extract_audio(temp_video_path, temp_audio_path)
-            if not success:
-                self._send_development_alert(f"Audio extraction failed for file {original_filename} (ID: {file_id})")
-                raise ValueError("Could not extract audio from video container.")
+            # 3. Renombrado Estricto en la Nube
+            self._rename_drive_file(file_id, new_filename)
 
-            # 4. Rename & Move in Drive
-            # Nomenclatura: [AFT]-[CLIENTE]-[AAAAMMDD]-[TIPO_PLANO]-[NRO_CLIP]
-            today_str = datetime.now().strftime("%Y%m%d")
-            # Example values for naming - in production, extract from folder names or API context
-            tipo_plano = "A-ROLL"
-            clip_nro = "001"
-            new_filename = f"[AFT]-[{(client_name.replace(' ', '_')).upper()}]-[{today_str}]-[{tipo_plano}]-[{clip_nro}]"
-            
-            drive_dest_path = f"/Clientes/{client_name}/01_Brutos/{today_str}/"
-            await self._rename_and_move_drive_file(file_id, new_filename, drive_dest_path)
-
-            # 5. Database Logging in Firestore
-            content_id = f"cont_{file_id}"
-            doc_data = {
-                "video_drive_url": f"https://drive.google.com/open?id={file_id}",
-                "audio_cached_url": temp_audio_path,
-                "status": "ingested",
-                "transcription": "",
-                "hooks_sugeridos": [],
-                "copy_final": "",
-                "fecha_creacion": datetime.utcnow()
-            }
-            
-            # Firestore Write: /afterbow-app/clientes/[cliente_id]/contenidos/[contenido_id]
-            if self.db:
-                doc_ref = self.db.collection("afterbow-app").document("clientes") \
-                                 .collection(client_id).document(content_id)
-                doc_ref.set(doc_data)
-                
-                # Update status to "Audio_Listo_Para_Transcripción"
-                doc_ref.update({"status": "Audio_Listo_Para_Transcripción"})
-                logger.info(f"Firestore status logged for content: {content_id}")
-
-            # 6. Trigger Webhook to Content-Brain Agent
+            # Enviar a Content Brain Agent
             webhook_payload = {
                 "content_id": content_id,
                 "client_id": client_id,
                 "audio_path": temp_audio_path,
-                "original_filename": original_filename
+                "original_filename": original_filename,
             }
             await self._trigger_content_brain_webhook(webhook_payload)
+
+            # 5. Persistencia de Estado en Firestore
+            self._update_firestore_status(client_id, content_id, drive_id=file_id, filename=new_filename)
 
             return {
                 "status": "success",
                 "content_id": content_id,
                 "new_filename": new_filename,
-                "drive_dest_path": drive_dest_path,
-                "audio_path": temp_audio_path
+                "drive_file_id": file_id,
             }
 
+        except HttpError as e:
+            logger.error(f"DIT Agent: Google API Network Error: {e}")
+            raise Exception(f"Google API Error: {e}")
+        except ValueError as e:
+            logger.error(f"DIT Agent: Video processing error: {e}")
+            raise e
+        except Exception as e:
+            logger.error(f"DIT Agent: Unexpected failure in DIT pipeline: {e}")
+            raise e
         finally:
-            # Clean up local video file to save server space, keep audio cached for Content-Brain
-            if os.path.exists(temp_video_path):
+            # 4. Limpieza Absoluta de Disco
+            self._absolute_disk_cleanup(temp_video_path, temp_audio_path)
+
+    # ──────────────────────────────────────────────
+    # 1. GOOGLE DRIVE DOWNLOAD
+    # ──────────────────────────────────────────────
+
+    def _download_drive_file(self, file_id: str, dest_path: str):
+        """
+        Downloads file into /tmp/ directory using MediaIoBaseDownload.
+        """
+        logger.info(f"DIT Agent: Downloading file ID {file_id} to {dest_path}...")
+        if not self.drive:
+            logger.warning("Mocking Drive download (service not initialized).")
+            with open(dest_path, "wb") as f:
+                f.write(b"mock video data")
+            return
+
+        try:
+            request = self.drive.files().get_media(fileId=file_id)
+            with io.FileIO(dest_path, "wb") as fh:
+                downloader = MediaIoBaseDownload(fh, request, chunksize=1024 * 1024 * 5)
+                done = False
+                while not done:
+                    status, done = downloader.next_chunk()
+                    if status:
+                        logger.info(f"DIT Agent: Download progress: {int(status.progress() * 100)}%")
+            logger.info("DIT Agent: Download completed.")
+        except HttpError as e:
+            raise HttpError(e.resp, e.content)
+
+    # ──────────────────────────────────────────────
+    # 2. AUDIO EXTRACTION
+    # ──────────────────────────────────────────────
+
+    def _extract_audio_128kbps(self, video_path: str, audio_path: str):
+        """
+        Extracts audio as a 128kbps MP3 using an ffmpeg subprocess.
+        """
+        logger.info(f"DIT Agent: Extracting audio from {video_path} to {audio_path} at 128kbps.")
+        try:
+            command = [
+                "ffmpeg", "-y", "-i", video_path,
+                "-vn", "-ar", "44100", "-ac", "2", "-b:a", "128k",
+                audio_path
+            ]
+            subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            logger.info("DIT Agent: Audio extraction successful.")
+        except subprocess.CalledProcessError as e:
+            error_msg = e.stderr.decode('utf-8', errors='ignore')
+            logger.error(f"DIT Agent: ffmpeg failed: {error_msg}")
+            raise ValueError(f"Codec format error or extraction failed: {error_msg}")
+        except Exception as e:
+            raise ValueError(f"Unexpected error during audio extraction: {e}")
+
+    # ──────────────────────────────────────────────
+    # 3. DRIVE RENAMING
+    # ──────────────────────────────────────────────
+
+    def _rename_drive_file(self, file_id: str, new_name: str):
+        """
+        Renames the file in Google Drive.
+        """
+        logger.info(f"DIT Agent: Renaming file {file_id} to {new_name}")
+        if not self.drive:
+            logger.warning("Mocking Drive rename (service not initialized).")
+            return
+
+        try:
+            self.drive.files().update(
+                fileId=file_id,
+                body={"name": new_name},
+                fields="id, name",
+            ).execute()
+        except HttpError as e:
+            raise HttpError(e.resp, e.content)
+
+    # ──────────────────────────────────────────────
+    # 4. ABSOLUTE DISK CLEANUP
+    # ──────────────────────────────────────────────
+
+    def _absolute_disk_cleanup(self, *file_paths):
+        """
+        Ensures local storage remains at 0 bytes to prevent hidden costs.
+        """
+        for path in file_paths:
+            if path and os.path.exists(path):
                 try:
-                    os.remove(temp_video_path)
-                    logger.info("Cleaned up temporary video brute cache.")
+                    os.remove(path)
+                    logger.info(f"DIT Agent: Cleaned up ephemeral file {path}")
                 except Exception as e:
-                    logger.warning(f"Failed to delete temp video: {e}")
+                    logger.warning(f"DIT Agent: Failed to clean up {path}: {e}")
 
-    async def _download_drive_file(self, file_id: str, dest_path: str):
-        """
-        Helper method to download a file from Google Drive.
-        Stubs Google Drive download endpoint.
-        """
-        logger.info(f"Google Drive: Downloading file ID {file_id}...")
-        if self.drive:
-            # Actual API logic will go here
-            # request = self.drive.files().get_media(fileId=file_id)
-            # fh = io.FileIO(dest_path, 'wb')
-            # downloader = MediaIoBaseDownload(fh, request)
-            # done = False
-            # while done is False:
-            #     status, done = downloader.next_chunk()
-            pass
-        else:
-            # Mock file writing for initialization/testing validation
-            with open(dest_path, "w") as f:
-                f.write("mock video data payload")
-            logger.warning("Mock video file written since Google Drive service is not connected.")
+    # ──────────────────────────────────────────────
+    # 5. FIRESTORE PERSISTENCE
+    # ──────────────────────────────────────────────
 
-    async def _rename_and_move_drive_file(self, file_id: str, new_name: str, dest_folder_path: str):
+    def _update_firestore_status(self, client_id: str, content_id: str, drive_id: str, filename: str):
         """
-        Renames the file and relocates it into the client folder path on Google Drive.
+        Updates the content document status to 'Audio_Listo'.
         """
-        logger.info(f"Google Drive: Renaming file to {new_name} and moving to {dest_folder_path}")
-        if self.drive:
-            # Call Drive API to update name and parents
-            pass
+        if not self.db:
+            logger.warning("DIT Agent: Firestore client not initialized. Persistence skipped.")
+            return
 
-    def _send_development_alert(self, message: str):
+        try:
+            doc_ref = (
+                self.db.collection("afterbow-app")
+                .document("clientes")
+                .collection(client_id)
+                .document(content_id)
+            )
+
+            # Create or update document
+            doc_data = {
+                "video_drive_url": f"https://drive.google.com/open?id={drive_id}",
+                "status": "Audio_Listo",
+                "filename": filename,
+                "fecha_actualizacion": datetime.utcnow(),
+            }
+            doc_ref.set(doc_data, merge=True)
+            logger.info(f"DIT Agent: Successfully updated state in Firestore for {content_id} to 'Audio_Listo'.")
+        except Exception as e:
+            logger.error(f"DIT Agent: Failed to persist state in Firestore: {e}")
+            raise e
+
+    # ──────────────────────────────────────────────
+    # UTILS & WEBHOOKS
+    # ──────────────────────────────────────────────
+
+    @staticmethod
+    def _parse_video_specifications(filename: str) -> Tuple[str, str]:
         """
-        Alerts Afterbow development channel when DIT validation fails.
+        Extracts plan type and sequence from filename.
         """
-        logger.error(f"DIT ALERT: {message}")
-        # Send slack/telegram notification in production
+        clean_name = filename.upper()
+        tipo_plano = "B-ROLL"
+        if "A-ROLL" in clean_name or "A_ROLL" in clean_name or "TALKING" in clean_name:
+            tipo_plano = "A-ROLL"
+        elif "HOOK" in clean_name:
+            tipo_plano = "HOOK"
+
+        numbers = re.findall(r"\d+", filename)
+        clip_nro = numbers[-1].zfill(3) if numbers else "001"
+        return tipo_plano, clip_nro
 
     async def _trigger_content_brain_webhook(self, payload: Dict[str, Any]):
         """
-        Dispatches HTTP POST request containing details to Content-Brain agent webhook.
+        Triggers the Content Brain Agent after audio extraction is ready.
         """
+        import httpx
         webhook_url = settings.CONTENT_BRAIN_WEBHOOK_URL
+        if not webhook_url:
+            logger.warning("CONTENT_BRAIN_WEBHOOK_URL not configured. Skipping webhook.")
+            return
+
         logger.info(f"Sending webhook to Content Brain Agent: {webhook_url}")
-        
         async with httpx.AsyncClient() as client:
             try:
-                # In production, we'd trigger an async task or make an HTTP call
-                # response = await client.post(webhook_url, json=payload, timeout=10.0)
-                # response.raise_for_status()
-                logger.info("Content-Brain webhook triggered successfully.")
+                response = await client.post(webhook_url, json=payload, timeout=60.0)
+                response.raise_for_status()
             except Exception as e:
                 logger.error(f"Failed to trigger Content-Brain webhook: {e}")
+                raise e

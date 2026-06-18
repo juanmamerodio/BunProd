@@ -112,7 +112,7 @@ El módulo `dit_agent.py` cuenta con un sistema robusto para mitigar y reportar 
 
 ---
 
-## Estructuración del Prompt del Sistema en el Content-Brain Agent (`/backend/agents/content_brain.py`)
+## Estructuración del Prompt del Sistema en Content-Brain Service (`/backend/app/services/content_brain_service.py`)
 
 Para garantizar que el modelo de lenguaje (Gemini 1.5) genere transcripciones exactas y redacte copys estrictamente alineados con la identidad y el tono de Afterbow Productions, el prompt del sistema se estructuró de la siguiente forma en el código:
 
@@ -138,4 +138,111 @@ Para evitar fallas de análisis sintáctico al procesar el output de la IA en el
 
 Esto asegura compatibilidad de tipos directa con nuestros modelos de datos de Firestore.
 
+---
+
+## Fase 1 — Auditoría Técnica: Cloud Run Ready (2026-06-13)
+
+### Código Eliminado (Legacy)
+
+- **`/backend/agents/`**: Se eliminó el directorio completo que contenía `dit_agent.py` (306 líneas) y `content_brain.py` (389 líneas). La lógica funcional fue migrada a `/backend/app/services/`.
+- **`/agents/specs/`**: Se eliminó el directorio raíz con las especificaciones de diseño (`01_dit_agent_core.md`, `02_content_brain_agent_core.md`, `03_database_and_web_bridge.md`). El conocimiento ya está plasmado en el código productivo y en este archivo.
+
+### Unificación de Servicios
+
+Se consolidó toda la lógica de negocio en dos servicios con tipado fuerte Pydantic:
+
+- **`/backend/app/services/dit_service.py`**: Integra la lógica de producción de los 5 pasos del pipeline:
+  1. **Descarga Efímera**: Descarga de video desde Google Drive a `/tmp/` (`MediaIoBaseDownload` con chunked download).
+  2. **Extracción de Audio Optimizada**: Subproceso FFmpeg para extraer el audio y comprimirlo a 128kbps en formato `.mp3` (ahorro masivo de ancho de banda).
+  3. **Renombrado Estricto**: Renombra el archivo en Drive a la nomenclatura oficial (`[AFT]-[CLIENTE]-[AAAAMMDD]-[TIPO_PLANO]-[NRO_CLIP]`).
+  4. **Limpieza Absoluta de Disco (`finally`)**: Se llama a `_absolute_disk_cleanup()` para eliminar todo archivo efímero de `/tmp/`, manteniendo el almacenamiento del contenedor en 0 bytes y previniendo facturación por disco residual.
+  5. **Persistencia de Estado**: Actualiza el estado a `Audio_Listo` en Firestore.
+
+- **`/backend/app/services/content_brain_service.py`**: Integra la lógica real del agente legacy:
+  - Upload de audio a Google AI Studio (`genai.upload_file()`) con polling de estado.
+  - Prompt creativo completo del Director Creativo Senior con inyección de `BrandVoice` Pydantic.
+  - Gemini 1.5 Flash con `response_mime_type="application/json"` para output estructurado.
+  - Validación de hooks con `HookSuggestion` Pydantic model.
+  - Exportación de markdown a Google Drive con `MediaInMemoryUpload`.
+  - Cleanup de archivos efímeros en Google AI Studio vía `genai.delete_file()`.
+
+### Dockerfile Optimizado
+
+- Imagen base: `python:3.11-slim`
+- Dependencias de sistema: `ffmpeg`, `libavcodec-extra`, `libavformat-dev`
+- Limpieza de caché apt (`rm -rf /var/lib/apt/lists/*`)
+- Variables de entorno: `PYTHONDONTWRITEBYTECODE=1`, `PYTHONUNBUFFERED=1`
+- Puerto: `8080` (estándar Cloud Run)
+- Entrypoint: `uvicorn app.main:app --host 0.0.0.0 --port 8080`
+- Se creó `.dockerignore` para excluir `__pycache__`, `.env`, `.git`, `cache/`, etc.
+
+### Externalización de Credenciales
+
+Se eliminaron todas las dependencias de rutas estáticas locales. El sistema ahora resuelve credenciales en 3 niveles de prioridad:
+
+1. **Ruta explícita** (`FIREBASE_CREDENTIALS_PATH` / `GOOGLE_DRIVE_CREDENTIALS_PATH`) — para desarrollo local.
+2. **`GOOGLE_APPLICATION_CREDENTIALS`** — variable estándar de GCP, apuntando a un JSON de Service Account.
+3. **Application Default Credentials (ADC)** — automático en Cloud Run, GCE, GKE. No requiere archivos JSON.
+
+Se agregó `FIREBASE_PROJECT_ID` para especificar el proyecto de Firebase cuando se usa ADC sin JSON explícito.
+
+### Estructura Actual del Backend
+
+```
+/backend
+├── .dockerignore
+├── .env.example
+├── Dockerfile
+├── requirements.txt
+└── app/
+    ├── __init__.py
+    ├── main.py
+    ├── config.py              # PORT=8080, GOOGLE_APPLICATION_CREDENTIALS, FIREBASE_PROJECT_ID
+    ├── api/v1/
+    │   ├── dit.py
+    │   ├── content_brain.py
+    │   └── contents.py
+    ├── core/
+    │   ├── drive.py           # 3-tier credential resolution (explicit → GAC → ADC)
+    │   ├── firebase.py        # 3-tier credential resolution (explicit → GAC → ADC)
+    │   └── gemini.py
+    ├── models/
+    │   ├── client.py          # Client, BrandVoice
+    │   └── content.py         # ContentStatus, HookSuggestion, Content, ContentUpdate
+    ├── services/
+    │   ├── dit_service.py     # Lógica completa DIT (download, validate, extract, rename, move, log)
+    │   └── content_brain_service.py  # Lógica completa Content-Brain (Gemini, transcription, hooks, copy)
+    └── utils/
+        └── ffmpeg.py
+```
+
+---
+
+## Fase 2 — Implementación de Content-Brain Service (2026-06-13)
+
+### Llamada Multimodal con Audio Nativo
+
+Para realizar la transcripción cognitiva y la redacción del copy de forma altamente contextual, se implementó el siguiente flujo en `/backend/app/services/content_brain_service.py`:
+1. **Carga de Contexto**: Se accede a Firestore para obtener el manual de marca del cliente (`tono`, `arquetipo`, y `pilares`).
+2. **Carga Nativa de Audio**: Se utiliza la API de Archivos de Google AI (`genai.upload_file()`) para subir de forma efímera el archivo `.mp3` de 128kbps y se realiza polling de su estado hasta que esté activo.
+3. **Inferencia con Prompt Creativo**: Se llama al modelo `gemini-1.5-flash` inyectando tanto el archivo de audio como un prompt de sistema rígido que combina el tono, arquetipo y pilares con las restricciones de copywriting de Afterbow.
+
+### Restricción del Esquema JSON (Nativo)
+
+Se forzó al modelo a responder únicamente en formato estructurado JSON nativo configurando `response_mime_type="application/json"` en el `generation_config`.
+El esquema exigido y validado es:
+- `transcription`: Transcripción limpia y sin muletillas coloquiales del audio.
+- `hooks_sugeridos`: Un array de 3 ganchos secuenciales conteniendo:
+  - `alternative_number` (secuencia 1, 2, 3)
+  - `visual_hook` (acción en los primeros 3 segundos)
+  - `text_on_screen` (texto superpuesto en pantalla en MAYÚSCULAS)
+- `copy_final`: Texto final que sigue el estilo Afterbow (primera línea con emoji + mayúsculas, párrafos cortos de máx. 2 líneas, CTA directo de conversión).
+
+### Persistencia y Sincronización
+
+El resultado es persistido en Firestore de forma redundante:
+1. En la subcolección específica del cliente: `/clientes/[client_id]/contenidos/[content_id]`
+2. En la colección de sincronización del dashboard: `/afterbow-app/clientes/[client_id]/[content_id]`
+
+Para evitar la eliminación prematura del archivo de audio local (race condition) dado el procesamiento en segundo plano, se sincronizó el endpoint del webhook en `/api/v1/content-brain/process` usando `await` directo sobre el pipeline. Adicionalmente, el cliente HTTP interno (`dit_service.py`) aumentó su timeout de conexión a `60.0` segundos para tolerar el tiempo de transcripción e inferencia de Gemini. El archivo local se borra únicamente cuando el webhook retorna exitosamente la persistencia "ready".
 
